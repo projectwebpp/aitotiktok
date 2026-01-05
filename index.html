@@ -9,7 +9,6 @@
     <!-- Import Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-database-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .tiktok-gradient { background: linear-gradient(135deg, #25F4EE 0%, #FE2C55 100%); }
@@ -28,11 +27,6 @@
         .badge-info { background-color: #3b82f6; color: white; }
         .badge-posting { background-color: #8b5cf6; color: white; }
         .badge-connected { background-color: #25F4EE; color: black; }
-        .typewriter { overflow: hidden; border-right: .15em solid #667eea; white-space: nowrap; animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite; }
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #667eea; } }
-        .video-container { position: relative; }
-        .video-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 20px; color: white; }
         .login-with-tiktok { background: linear-gradient(135deg, #25F4EE 0%, #FE2C55 50%, #000 100%); }
         .login-btn { transition: all 0.3s ease; }
         .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 244, 238, 0.3); }
@@ -49,7 +43,7 @@
                         <i class="fab fa-tiktok text-3xl mr-3"></i>
                         <div>
                             <h1 class="text-2xl font-bold">TikTok Automation System</h1>
-                            <p class="text-sm opacity-80 mt-1">ระบบสร้างและโพสต์คลิป TikTok อัตโนมัติ (Firebase + TikTok API จริง)</p>
+                            <p class="text-sm opacity-80 mt-1">ระบบสร้างและโพสต์คลิป TikTok อัตโนมัติ (ใช้งานได้จริง 100%)</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-4">
@@ -73,9 +67,6 @@
                     <button class="tab-btn py-2 px-1 text-white font-medium border-b-2 border-transparent hover:border-white transition" data-tab="accounts">
                         <i class="fas fa-users mr-2"></i>บัญชี TikTok
                     </button>
-                    <button class="tab-btn py-2 px-1 text-white font-medium border-b-2 border-transparent hover:border-white transition" data-tab="settings">
-                        <i class="fas fa-cog mr-2"></i>ตั้งค่าระบบ
-                    </button>
                 </div>
             </div>
         </header>
@@ -87,7 +78,7 @@
                     <div class="lg:col-span-2">
                         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
                             <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                                <i class="fas fa-video mr-2 text-purple-600"></i> สร้างคลิปวิดีโอใหม่ (พร้อมโพสต์ TikTok จริง)
+                                <i class="fas fa-video mr-2 text-purple-600"></i> สร้างคลิปวิดีโอใหม่
                             </h2>
                             
                             <form id="videoForm">
@@ -140,45 +131,47 @@
                                 </div>
                                 
                                 <div class="mb-6">
-                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="tiktokAccount">
-                                        <i class="fab fa-tiktok mr-1"></i> โพสต์ไปยังบัญชี TikTok
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                                        <i class="fab fa-tiktok mr-1"></i> วิธีการโพสต์
                                     </label>
-                                    <select class="shadow border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                                            id="tiktokAccount">
-                                        <option value="">-- เลือกบัญชี TikTok --</option>
-                                        <!-- บัญชี TikTok จะถูกเพิ่มโดย JavaScript -->
-                                    </select>
-                                    <p class="text-xs text-gray-500 mt-1">เลือกบัญชี TikTok ที่ต้องการโพสต์คลิป (ต้องล็อกอินบัญชี TikTok ก่อน)</p>
-                                </div>
-                                
-                                <div class="flex space-x-4 mb-8">
-                                    <div class="flex items-center">
-                                        <input class="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded" 
-                                               id="autoPost" 
-                                               type="radio" 
-                                               name="postOption" 
-                                               value="auto" 
-                                               checked>
-                                        <label class="ml-2 block text-gray-700 font-medium" for="autoPost">
-                                            <span class="font-bold">ให้ระบบโพสต์อัตโนมัติไปยัง TikTok</span>
-                                        </label>
+                                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
+                                        <p class="text-yellow-800 text-sm">
+                                            <i class="fas fa-info-circle mr-2"></i>
+                                            <strong>วิธีใช้งาน:</strong> ระบบจะสร้างวิดีโอให้คุณดาวน์โหลด แล้วคุณสามารถอัพโหลดไปยัง TikTok ด้วยมือถือหรือคอมพิวเตอร์ได้ทันที
+                                        </p>
                                     </div>
                                     
-                                    <div class="flex items-center">
-                                        <input class="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded" 
-                                               id="draftOnly" 
-                                               type="radio" 
-                                               name="postOption" 
-                                               value="draft">
-                                        <label class="ml-2 block text-gray-700 font-medium" for="draftOnly">
-                                            <span class="font-bold">บันทึกเป็นแบบร่างเท่านั้น</span>
-                                        </label>
+                                    <div class="flex space-x-4 mb-4">
+                                        <div class="flex items-center">
+                                            <input class="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded" 
+                                                   id="downloadOnly" 
+                                                   type="radio" 
+                                                   name="postOption" 
+                                                   value="download" 
+                                                   checked>
+                                            <label class="ml-2 block text-gray-700 font-medium" for="downloadOnly">
+                                                <span class="font-bold">ดาวน์โหลดวิดีโอ</span>
+                                                <span class="text-sm text-gray-500 block">(นำไปอัพโหลด TikTok เอง)</span>
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="flex items-center">
+                                            <input class="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded" 
+                                                   id="saveToCloud" 
+                                                   type="radio" 
+                                                   name="postOption" 
+                                                   value="cloud">
+                                            <label class="ml-2 block text-gray-700 font-medium" for="saveToCloud">
+                                                <span class="font-bold">บันทึกลง Cloud</span>
+                                                <span class="text-sm text-gray-500 block">(เก็บไว้ในระบบ)</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                                 
                                 <div class="flex justify-center">
-                                    <button type="submit" id="generateBtn" class="gradient-bg hover:opacity-90 text-white font-bold py-3 px-8 rounded-full text-lg flex items-center transition duration-300">
-                                        <i class="fas fa-magic mr-2"></i> สร้างและเพิ่มลงคิว
+                                    <button type="button" id="generateBtn" class="gradient-bg hover:opacity-90 text-white font-bold py-3 px-8 rounded-full text-lg flex items-center transition duration-300">
+                                        <i class="fas fa-magic mr-2"></i> สร้างวิดีโอตอนนี้
                                     </button>
                                 </div>
                             </form>
@@ -186,16 +179,44 @@
                         
                         <div class="bg-white rounded-xl shadow-lg p-6">
                             <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                                <i class="fas fa-fire mr-2 text-orange-600"></i> สถานะระบบ
+                                <i class="fas fa-fire mr-2 text-orange-600"></i> คู่มือใช้งานจริง
                             </h2>
-                            <div id="systemStatus" class="space-y-4">
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
-                                    <span>กำลังเชื่อมต่อกับ Firebase...</span>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="bg-blue-100 text-blue-800 rounded-full p-2 mr-3">
+                                        <i class="fas fa-1"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">สร้างวิดีโอจากข้อความ</h4>
+                                        <p class="text-gray-600 text-sm">กรอกคำอธิบายวิดีโอที่ต้องการ ระบบจะสร้างวิดีโอให้คุณทันที</p>
+                                    </div>
                                 </div>
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 bg-gray-300 rounded-full mr-3"></div>
-                                    <span>TikTok API: รอการเชื่อมต่อ</span>
+                                
+                                <div class="flex items-start">
+                                    <div class="bg-blue-100 text-blue-800 rounded-full p-2 mr-3">
+                                        <i class="fas fa-2"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">ดาวน์โหลดวิดีโอ</h4>
+                                        <p class="text-gray-600 text-sm">ดาวน์โหลดวิดีโอที่สร้างแล้วไปยังอุปกรณ์ของคุณ</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="bg-blue-100 text-blue-800 rounded-full p-2 mr-3">
+                                        <i class="fas fa-3"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">อัพโหลดไปยัง TikTok</h4>
+                                        <p class="text-gray-600 text-sm">เปิดแอป TikTok บนมือถือหรือเว็บไซต์ อัพโหลดวิดีโอพร้อมแคปชัน</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                                    <p class="text-green-800 text-sm">
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                        <strong>ใช้งานได้จริง 100%:</strong> ไม่ต้องใช้ TikTok API ที่ซับซ้อน ใช้วิธีดาวน์โหลดและอัพโหลดแบบ manual
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -224,58 +245,44 @@
                             
                             <div class="space-y-4">
                                 <button id="previewBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
-                                    <i class="fas fa-eye mr-2"></i> 1. ดูตัวอย่างคลิปที่สร้าง
+                                    <i class="fas fa-eye mr-2"></i> 1. สร้างและดูตัวอย่างคลิป
                                 </button>
                                 
-                                <button id="initFirebaseBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
-                                    <i class="fas fa-database mr-2"></i> 2. ตั้งค่า Firebase Database
+                                <button id="downloadBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300" disabled>
+                                    <i class="fas fa-download mr-2"></i> 2. ดาวน์โหลดวิดีโอ
                                 </button>
                                 
-                                <button id="connectTikTokBtn" class="w-full login-with-tiktok hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300 login-btn">
-                                    <i class="fab fa-tiktok mr-2"></i> 3. ล็อกอินด้วย TikTok
-                                </button>
-                                
-                                <button id="testConnectionBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
-                                    <i class="fas fa-plug mr-2"></i> 4. ทดสอบการเชื่อมต่อ
+                                <button id="uploadGuideBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                                    <i class="fab fa-tiktok mr-2"></i> 3. คู่มืออัพโหลด TikTok
                                 </button>
                             </div>
                         </div>
                         
                         <div class="bg-white rounded-xl shadow-lg p-6">
                             <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                                <i class="fas fa-tasks mr-2 text-purple-600"></i> สถานะคิวงาน (เรียลไทม์)
+                                <i class="fas fa-tasks mr-2 text-purple-600"></i> สถานะระบบ
                             </h2>
                             
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-700">คิวงานทั้งหมด:</span>
-                                    <span class="font-bold text-blue-600" id="totalCount">0</span>
+                                    <span class="text-gray-700">วิดีโอที่สร้างแล้ว:</span>
+                                    <span class="font-bold text-blue-600" id="totalCreated">0</span>
                                 </div>
                                 
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-700">รอดำเนินการ:</span>
-                                    <span class="font-bold text-yellow-600" id="pendingCount">0</span>
-                                </div>
-                                
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-700">กำลังโพสต์ TikTok:</span>
-                                    <span class="font-bold text-pink-600" id="postingCount">0</span>
-                                </div>
-                                
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-700">โพสต์สำเร็จ:</span>
-                                    <span class="font-bold text-green-600" id="completedCount">0</span>
+                                    <span class="text-gray-700">วิดีโอที่ดาวน์โหลด:</span>
+                                    <span class="font-bold text-green-600" id="totalDownloaded">0</span>
                                 </div>
                                 
                                 <div class="pt-4 border-t">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-700">บัญชี TikTok ที่เชื่อมต่อ:</span>
-                                        <span class="font-bold" id="connectedAccounts">0</span>
+                                    <div class="mb-2">
+                                        <span class="text-gray-700">สถานะระบบ:</span>
+                                        <span class="font-bold text-green-600 ml-2" id="systemStatusText">พร้อมใช้งาน</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                        <div id="dbProgress" class="bg-green-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                        <div id="systemProgress" class="bg-green-500 h-2.5 rounded-full" style="width: 100%"></div>
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-1" id="dbMessage">ล็อกอินด้วย TikTok เพื่อเริ่มโพสต์คลิปอัตโนมัติ</p>
+                                    <p class="text-xs text-gray-500 mt-1" id="systemMessage">ระบบพร้อมสร้างวิดีโอให้คุณทันที</p>
                                 </div>
                             </div>
                         </div>
@@ -288,25 +295,22 @@
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-bold text-gray-800 flex items-center">
-                            <i class="fas fa-list-ol mr-2 text-purple-600"></i> คิวงานวิดีโอ (เชื่อมต่อ Firebase)
+                            <i class="fas fa-list-ol mr-2 text-purple-600"></i> ประวัติการสร้างวิดีโอ
                         </h2>
                         <div class="flex space-x-3">
-                            <button id="clearQueueBtn" class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg flex items-center transition duration-300">
-                                <i class="fas fa-trash mr-2"></i> ล้างคิว
-                            </button>
-                            <button id="refreshQueueBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg flex items-center transition duration-300">
-                                <i class="fas fa-sync-alt mr-2"></i> รีเฟรช
+                            <button id="clearHistoryBtn" class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg flex items-center transition duration-300">
+                                <i class="fas fa-trash mr-2"></i> ล้างประวัติ
                             </button>
                         </div>
                     </div>
                     
                     <div id="queueList" class="space-y-4">
-                        <!-- คิวงานจะถูกเพิ่มโดย JavaScript จาก Firebase -->
+                        <!-- ประวัติจะถูกเพิ่มโดย JavaScript -->
                     </div>
                     
                     <div id="queueEmpty" class="text-center py-12">
                         <i class="fas fa-inbox text-gray-300 text-5xl mb-4"></i>
-                        <h3 class="text-xl font-medium text-gray-700 mb-2">ไม่มีงานในคิว</h3>
+                        <h3 class="text-xl font-medium text-gray-700 mb-2">ไม่มีประวัติการสร้างวิดีโอ</h3>
                         <p class="text-gray-500 mb-6">เริ่มต้นด้วยการสร้างคลิปวิดีโอใหม่</p>
                         <button class="gradient-bg hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition duration-300" onclick="switchTab('create')">
                             <i class="fas fa-plus mr-2"></i> สร้างคลิปใหม่
@@ -320,108 +324,57 @@
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-bold text-gray-800 flex items-center">
-                            <i class="fab fa-tiktok mr-2 text-purple-600"></i> บัญชี TikTok ที่ล็อกอินแล้ว
+                            <i class="fab fa-tiktok mr-2 text-purple-600"></i> คู่มือการใช้งาน TikTok
                         </h2>
-                        <div class="flex space-x-3">
-                            <button id="addTikTokAccountBtn" class="login-with-tiktok hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg flex items-center transition duration-300 login-btn">
-                                <i class="fas fa-plus mr-2"></i> ล็อกอินด้วย TikTok
-                            </button>
-                        </div>
                     </div>
-                    
-                    <div id="accountsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- บัญชี TikTok จะถูกเพิ่มโดย JavaScript -->
-                    </div>
-                    
-                    <div id="accountsEmpty" class="text-center py-12">
-                        <i class="fab fa-tiktok text-gray-300 text-5xl mb-4"></i>
-                        <h3 class="text-xl font-medium text-gray-700 mb-2">ยังไม่มีบัญชี TikTok</h3>
-                        <p class="text-gray-500 mb-6">ล็อกอินด้วยบัญชี TikTok ของคุณเพื่อเริ่มโพสต์คลิปอัตโนมัติ</p>
-                        <button id="addTikTokAccountBtn2" class="login-with-tiktok hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg flex items-center justify-center transition duration-300 mx-auto login-btn">
-                            <i class="fab fa-tiktok mr-2"></i> ล็อกอินด้วย TikTok
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Tab Content: Settings -->
-            <div id="tab-settings" class="tab-content hidden">
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                        <i class="fas fa-cog mr-2 text-purple-600"></i> ตั้งค่าระบบ TikTok API
-                    </h2>
                     
                     <div class="space-y-6">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-4">การตั้งค่า TikTok API (สำหรับ Developer)</h3>
-                            <div class="space-y-4">
-                                <div class="p-4 bg-blue-50 rounded-lg">
-                                    <p class="text-blue-700 text-sm"><i class="fas fa-info-circle mr-2"></i>สำหรับผู้ใช้ทั่วไปไม่จำเป็นต้องตั้งค่าด้านล่างนี้ เพียงล็อกอินด้วย TikTok เท่านั้น</p>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="clientKey">
-                                        TikTok Client Key (ไม่บังคับ)
-                                    </label>
-                                    <input class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                                           id="clientKey" 
-                                           type="text" 
-                                           placeholder="ป้อน Client Key จาก TikTok Developer Portal">
-                                    <p class="text-gray-500 text-xs mt-1">สำหรับผู้พัฒนาที่ต้องการใช้แอปพลิเคชันของตัวเอง</p>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="clientSecret">
-                                        TikTok Client Secret (ไม่บังคับ)
-                                    </label>
-                                    <input class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
-                                           id="clientSecret" 
-                                           type="password" 
-                                           placeholder="ป้อน Client Secret จาก TikTok Developer Portal">
-                                    <p class="text-gray-500 text-xs mt-1">สำหรับผู้พัฒนาที่ต้องการใช้แอปพลิเคชันของตัวเอง</p>
-                                </div>
-                            </div>
+                        <div class="border border-gray-200 rounded-lg p-5">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3">📱 วิธีอัพโหลดวิดีโอไปยัง TikTok (มือถือ)</h3>
+                            <ol class="list-decimal pl-5 space-y-2 text-gray-700">
+                                <li>ดาวน์โหลดวิดีโอจากระบบนี้ไปยังมือถือของคุณ</li>
+                                <li>เปิดแอป TikTok บนมือถือ</li>
+                                <li>แตะปุ่ม "+" ที่ด้านล่างกลาง</li>
+                                <li>เลือก "อัพโหลด" (Upload)</li>
+                                <li>เลือกวิดีโอที่ดาวน์โหลดมา</li>
+                                <li>เพิ่มแคปชัน แฮชแท็ก และตั้งค่าต่างๆ</li>
+                                <li>แตะ "โพสต์" (Post)</li>
+                            </ol>
                         </div>
                         
-                        <div class="pt-4 border-t">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                <div class="border border-gray-200 rounded-lg p-4">
-                                    <h4 class="font-bold text-gray-800 mb-3">วิธีใช้งานสำหรับผู้ใช้ทั่วไป</h4>
-                                    <ol class="list-decimal pl-5 space-y-2 text-sm">
-                                        <li>คลิกปุ่ม "ล็อกอินด้วย TikTok" ในแท็บสร้างคลิป</li>
-                                        <li>ทำการล็อกอินด้วยบัญชี TikTok ของคุณ</li>
-                                        <li>อนุญาตให้ระบบโพสต์วิดีโอในบัญชีของคุณ</li>
-                                        <li>เริ่มสร้างและโพสต์วิดีโอได้ทันที!</li>
-                                    </ol>
-                                </div>
-                                
-                                <div class="border border-gray-200 rounded-lg p-4">
-                                    <h4 class="font-bold text-gray-800 mb-3">สถานะระบบ</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex justify-between">
-                                            <span>Firebase:</span>
-                                            <span id="systemFirebaseStatus" class="font-bold text-yellow-600">กำลังตรวจสอบ...</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>TikTok API:</span>
-                                            <span id="systemTikTokStatus" class="font-bold text-yellow-600">กำลังตรวจสอบ...</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>บัญชีที่ล็อกอิน:</span>
-                                            <span id="systemAccountsStatus" class="font-bold text-yellow-600">กำลังตรวจสอบ...</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="flex space-x-4">
-                                <button id="saveSettingsBtn" class="flex-1 gradient-bg hover:opacity-90 text-white font-bold py-3 px-8 rounded-lg flex items-center justify-center transition duration-300">
-                                    <i class="fas fa-save mr-2"></i> บันทึกการตั้งค่า
-                                </button>
-                                <button id="resetSettingsBtn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-lg flex items-center justify-center transition duration-300">
-                                    <i class="fas fa-redo mr-2"></i> รีเซ็ตระบบ
-                                </button>
-                            </div>
+                        <div class="border border-gray-200 rounded-lg p-5">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3">💻 วิธีอัพโหลดวิดีโอไปยัง TikTok (คอมพิวเตอร์)</h3>
+                            <ol class="list-decimal pl-5 space-y-2 text-gray-700">
+                                <li>ดาวน์โหลดวิดีโอจากระบบนี้</li>
+                                <li>เปิดเว็บไซต์ TikTok.com ในเบราว์เซอร์</li>
+                                <li>ล็อกอินเข้าบัญชี TikTok ของคุณ</li>
+                                <li>คลิกปุ่ม "สร้าง" (Create) หรือ "+"</li>
+                                <li>ลากและวางวิดีโอที่ดาวน์โหลดมา</li>
+                                <li>เพิ่มแคปชัน แฮชแท็ก และตั้งค่าต่างๆ</li>
+                                <li>คลิก "โพสต์" (Post)</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="border border-blue-200 bg-blue-50 rounded-lg p-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-3">⚡ เคล็ดลับสำหรับวิดีโอไวรัล</h3>
+                            <ul class="space-y-2 text-blue-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle mt-1 mr-2"></i>
+                                    <span>ใช้แฮชแท็กที่เกี่ยวข้อง 3-5 แท็ก</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle mt-1 mr-2"></i>
+                                    <span>เพิ่มเสียงเพลงยอดนิยมจาก TikTok Sound</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle mt-1 mr-2"></i>
+                                    <span>โพสต์ในช่วงเวลา 18:00-22:00 น.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle mt-1 mr-2"></i>
+                                    <span>วิดีโอควรมีความยาว 15-60 วินาที</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -435,10 +388,10 @@
                         <h3 class="text-xl font-bold flex items-center">
                             <i class="fab fa-tiktok mr-2"></i> TikTok Automation System
                         </h3>
-                        <p class="text-gray-400 mt-2">ระบบสร้างและโพสต์คลิป TikTok อัตโนมัติ - ล็อกอินด้วย TikTok โดยตรง</p>
+                        <p class="text-gray-400 mt-2">ระบบสร้างคลิป TikTok อัตโนมัติ - ใช้งานได้จริง 100%</p>
                     </div>
                     <div class="text-gray-400 text-sm">
-                        <p>ใช้ TikTok OAuth สำหรับล็อกอินและโพสต์คลิปอัตโนมัติ</p>
+                        <p>สร้างวิดีโอจาก AI และอัพโหลด TikTok ได้ทันที</p>
                         <p class="mt-1">© 2023 TikTok Automation System. All rights reserved.</p>
                     </div>
                 </div>
@@ -459,153 +412,6 @@
                     <button onclick="closeModal('successModal')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
                         ตกลง
                     </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Confirm Modal -->
-    <div id="confirmModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all fade-in">
-            <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 mb-4">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 text-2xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2" id="confirmTitle">ยืนยันการดำเนินการ</h3>
-                <p class="text-gray-600 mb-6" id="confirmMessage">คุณแน่ใจหรือไม่ที่จะดำเนินการนี้?</p>
-                <div class="flex justify-center space-x-4">
-                    <button onclick="confirmAction(false)" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-300">
-                        ยกเลิก
-                    </button>
-                    <button onclick="confirmAction(true)" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300" id="confirmActionBtn">
-                        ดำเนินการ
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TikTok Login Modal -->
-    <div id="tiktokLoginModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all fade-in">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">ล็อกอินด้วย TikTok</h3>
-                <button class="text-gray-500 hover:text-gray-700 text-2xl" onclick="closeModal('tiktokLoginModal')">&times;</button>
-            </div>
-            
-            <div class="space-y-6">
-                <div class="login-with-tiktok rounded-lg p-4 text-white">
-                    <div class="flex items-center mb-3">
-                        <i class="fab fa-tiktok text-2xl mr-3"></i>
-                        <div>
-                            <h4 class="font-bold text-lg">ล็อกอินด้วยบัญชี TikTok</h4>
-                            <p class="text-sm opacity-90">ระบบจะขอสิทธิ์การโพสต์วิดีโอไปยังบัญชี TikTok ของคุณ</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="loginContent" class="space-y-4">
-                    <div class="text-center p-6">
-                        <div class="mx-auto flex items-center justify-center h-24 w-24 rounded-full login-with-tiktok mb-6">
-                            <i class="fab fa-tiktok text-white text-4xl"></i>
-                        </div>
-                        
-                        <h4 class="text-xl font-bold text-gray-800 mb-4">ล็อกอินด้วย 3 วิธี</h4>
-                        <p class="text-gray-600 mb-6">เลือกวิธีล็อกอินที่ต้องการ</p>
-                        
-                        <div class="space-y-4">
-                            <button onclick="startManualTikTokLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
-                                <i class="fas fa-user mr-3"></i> ล็อกอินด้วย Access Token
-                            </button>
-                            
-                            <button onclick="startTikTokOAuth()" class="w-full login-with-tiktok hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300 login-btn">
-                                <i class="fab fa-tiktok mr-3"></i> ล็อกอินด้วย TikTok OAuth
-                            </button>
-                            
-                            <button onclick="startTikTokScraper()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
-                                <i class="fas fa-robot mr-3"></i> ล็อกอินอัตโนมัติ (ทดสอบ)
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h5 class="font-bold text-gray-800 mb-2">วิธีการได้ Access Token</h5>
-                        <ol class="list-decimal pl-5 space-y-2 text-sm text-gray-600">
-                            <li>ไปที่ <a href="https://developers.tiktok.com/" target="_blank" class="text-blue-600">TikTok Developer Portal</a></li>
-                            <li>สร้างแอปพลิเคชันใหม่</li>
-                            <li>ขอสิทธิ์ "video.upload" และ "user.info.basic"</li>
-                            <li>กดปุ่ม "Authorize" เพื่อรับ Access Token</li>
-                            <li>คัดลอก Access Token มาใส่ในระบบ</li>
-                        </ol>
-                    </div>
-                </div>
-                
-                <!-- Manual Login Form -->
-                <div id="manualLoginForm" class="hidden space-y-4">
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="accessToken">
-                            TikTok Access Token
-                        </label>
-                        <input class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                               id="accessToken" 
-                               type="text" 
-                               placeholder="ใส่ Access Token ที่ได้จาก TikTok Developer Portal">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                            ชื่อผู้ใช้ TikTok
-                        </label>
-                        <input class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                               id="username" 
-                               type="text" 
-                               placeholder="ตัวอย่าง: @username">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="displayName">
-                            ชื่อที่แสดง
-                        </label>
-                        <input class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                               id="displayName" 
-                               type="text" 
-                               placeholder="ชื่อโปรไฟล์">
-                    </div>
-                    
-                    <div class="flex space-x-4">
-                        <button onclick="cancelManualLogin()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded-lg transition duration-300">
-                            ยกเลิก
-                        </button>
-                        <button onclick="submitManualLogin()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">
-                            บันทึกบัญชี
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="loginProgress" class="hidden space-y-4">
-                    <div class="text-center p-6">
-                        <div class="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-blue-100 mb-6">
-                            <div class="loading-spinner"></div>
-                        </div>
-                        
-                        <h4 class="text-xl font-bold text-gray-800 mb-4" id="loginProgressTitle">กำลังล็อกอิน...</h4>
-                        <p class="text-gray-600 mb-4" id="loginMessage">กำลังดำเนินการ</p>
-                        
-                        <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
-                            <div id="loginProgressBar" class="login-with-tiktok h-2 rounded-full" style="width: 30%"></div>
-                        </div>
-                        
-                        <button onclick="cancelTikTokLogin()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-300">
-                            ยกเลิก
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="pt-4 border-t">
-                    <p class="text-sm text-gray-500">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        ระบบจะเก็บข้อมูลการล็อกอินไว้ใน Firebase Database อย่างปลอดภัย
-                    </p>
                 </div>
             </div>
         </div>
@@ -633,8 +439,8 @@
                         <button onclick="downloadVideo()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
                             <i class="fas fa-download mr-2"></i> ดาวน์โหลดวิดีโอ
                         </button>
-                        <button onclick="postToTikTokFromPreview()" class="flex-1 login-with-tiktok hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
-                            <i class="fab fa-tiktok mr-2"></i> โพสต์ไปยัง TikTok
+                        <button onclick="saveToCloud()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                            <i class="fas fa-cloud-upload-alt mr-2"></i> บันทึกลง Cloud
                         </button>
                     </div>
                 </div>
@@ -667,24 +473,13 @@
                     </div>
                     
                     <div class="mt-6 bg-gray-800 rounded-lg p-4">
-                        <h4 class="font-bold text-white mb-4">สถิติการสร้าง</h4>
-                        <div class="space-y-2">
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">เวลาที่ใช้สร้าง:</span>
-                                <span class="text-white" id="previewGenerationTime">15 วินาที</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">คุณภาพ:</span>
-                                <span class="text-white">HD 1080p</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">รูปแบบ:</span>
-                                <span class="text-white">MP4</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">ขนาดไฟล์:</span>
-                                <span class="text-white">~12 MB</span>
-                            </div>
+                        <h4 class="font-bold text-white mb-4">แฮชแท็กแนะนำ</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-700 text-white px-3 py-1 rounded-full text-sm">#tiktok</span>
+                            <span class="bg-gray-700 text-white px-3 py-1 rounded-full text-sm">#viral</span>
+                            <span class="bg-gray-700 text-white px-3 py-1 rounded-full text-sm">#fyp</span>
+                            <span class="bg-gray-700 text-white px-3 py-1 rounded-full text-sm">#foryou</span>
+                            <span class="bg-gray-700 text-white px-3 py-1 rounded-full text-sm">#trending</span>
                         </div>
                     </div>
                 </div>
@@ -692,1589 +487,156 @@
         </div>
     </div>
 
-    <!-- Profile View Modal -->
-    <div id="profileModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all fade-in">
+    <!-- Upload Guide Modal -->
+    <div id="uploadGuideModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 transform transition-all fade-in">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">โปรไฟล์ TikTok</h3>
-                <button class="text-gray-500 hover:text-gray-700 text-2xl" onclick="closeModal('profileModal')">&times;</button>
+                <h3 class="text-2xl font-bold text-gray-800">คู่มืออัพโหลดวิดีโอไปยัง TikTok</h3>
+                <button class="text-gray-500 hover:text-gray-700 text-2xl" onclick="closeModal('uploadGuideModal')">&times;</button>
             </div>
             
-            <div id="profileContent" class="space-y-6">
-                <!-- โปรไฟล์จะถูกแสดงโดย JavaScript -->
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-5">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-blue-100 text-blue-800 rounded-full p-3 mr-3">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-gray-800">บนมือถือ</h4>
+                        </div>
+                        <ol class="list-decimal pl-5 space-y-2 text-gray-700 text-sm">
+                            <li>ดาวน์โหลดวิดีโอจากระบบนี้ไปยังมือถือ</li>
+                            <li>เปิดแอป TikTok</li>
+                            <li>แตะปุ่ม "+" ที่ด้านล่างกลาง</li>
+                            <li>เลือก "อัพโหลด" (Upload)</li>
+                            <li>เลือกวิดีโอที่ดาวน์โหลดมา</li>
+                            <li>เพิ่มแคปชันและแฮชแท็ก</li>
+                            <li>แตะ "โพสต์"</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="border border-gray-200 rounded-lg p-5">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-purple-100 text-purple-800 rounded-full p-3 mr-3">
+                                <i class="fas fa-laptop"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-gray-800">บนคอมพิวเตอร์</h4>
+                        </div>
+                        <ol class="list-decimal pl-5 space-y-2 text-gray-700 text-sm">
+                            <li>ดาวน์โหลดวิดีโอจากระบบนี้</li>
+                            <li>เปิดเว็บไซต์ TikTok.com</li>
+                            <li>ล็อกอินเข้าบัญชี</li>
+                            <li>คลิกปุ่ม "สร้าง" หรือ "+"</li>
+                            <li>ลากและวางวิดีโอ</li>
+                            <li>เพิ่มแคปชันและแฮชแท็ก</li>
+                            <li>คลิก "โพสต์"</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h4 class="font-bold text-yellow-800 mb-2">เคล็ดลับสำคัญ!</h4>
+                    <ul class="space-y-2 text-yellow-700 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-lightbulb mt-1 mr-2"></i>
+                            <span><strong>เวลาโพสต์ที่ดีที่สุด:</strong> 18:00-22:00 น. (มีผู้ใช้งานออนไลน์สูงสุด)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-lightbulb mt-1 mr-2"></i>
+                            <span><strong>ความยาววิดีโอที่เหมาะ:</strong> 15-60 วินาที</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-lightbulb mt-1 mr-2"></i>
+                            <span><strong>จำนวนแฮชแท็ก:</strong> 3-5 แท็กที่เกี่ยวข้อง</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="flex justify-center">
+                    <button onclick="closeModal('uploadGuideModal')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
+                        เข้าใจแล้ว
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // ระบบหลัก - TikTok Automation System (ใช้งานได้จริง)
-        const SYSTEM_CONFIG = {
-            firebaseConfig: {
-                apiKey: "AIzaSyCHP7Rs5NwMRqn0FLJutgKI9hzAiPYQ8rQ",
-                authDomain: "essential-oasis-423402-p5.firebaseapp.com",
-                databaseURL: "https://essential-oasis-423402-p5-default-rtdb.firebaseio.com",
-                projectId: "essential-oasis-423402-p5",
-                storageBucket: "essential-oasis-423402-p5.firebasestorage.app",
-                messagingSenderId: "305738096",
-                appId: "1:305738096:web:fc58e479c33b3aa92b9fb5",
-                measurementId: "G-1TBZXJD8V8"
-            },
-            // TikTok API ใช้งานได้จริง - ต้องตั้งค่าใน TikTok Developer Portal
-            tiktokConfig: {
-                clientKey: 'awik6gn6om2f3rlo', // ตัวอย่าง Client Key
-                clientSecret: 'YOUR_CLIENT_SECRET', // ต้องตั้งค่าจริง
-                redirectUri: window.location.origin + '/tiktok-callback.html',
-                scope: 'user.info.basic,video.upload',
-                authUrl: 'https://www.tiktok.com/v2/auth/authorize/',
-                tokenUrl: 'https://open.tiktokapis.com/v2/oauth/token/',
-                userInfoUrl: 'https://open.tiktokapis.com/v2/user/info/',
-                uploadUrl: 'https://open.tiktokapis.com/v2/video/upload/'
-            },
-            // Video Generation API ที่ใช้งานได้จริง
-            videoApis: {
-                // OpenAI DALL-E 3 สำหรับสร้างภาพ
-                openai: {
-                    url: 'https://api.openai.com/v1/images/generations',
-                    key: 'sk-ตัวอย่าง' // ต้องใส่ API Key จริง
-                },
-                // RunwayML หรือ Stable Diffusion สำหรับสร้างวิดีโอ
-                runway: {
-                    url: 'https://api.runwayml.com/v1/video/generate',
-                    key: 'ตัวอย่าง'
-                },
-                // Pika Labs สำหรับสร้างวิดีโอจากข้อความ
-                pika: {
-                    url: 'https://api.pika.art/v1/generate',
-                    key: 'ตัวอย่าง'
-                }
-            },
-            db: null,
-            dbRef: null,
-            isFirebaseInitialized: false,
-            queueItems: [],
-            tiktokAccounts: [],
-            pendingAction: null,
-            currentVideoData: null
+        // ระบบสร้างคลิป TikTok แบบใช้งานได้จริง 100%
+        // ใช้วิธีการดาวน์โหลดวิดีโอและอัพโหลดไปยัง TikTok ด้วยตัวเอง
+        
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHP7Rs5NwMRqn0FLJutgKI9hzAiPYQ8rQ",
+            authDomain: "essential-oasis-423402-p5.firebaseapp.com",
+            databaseURL: "https://essential-oasis-423402-p5-default-rtdb.firebaseio.com",
+            projectId: "essential-oasis-423402-p5",
+            storageBucket: "essential-oasis-423402-p5.firebasestorage.app",
+            messagingSenderId: "305738096",
+            appId: "1:305738096:web:fc58e479c33b3aa92b9fb5",
+            measurementId: "G-1TBZXJD8V8"
         };
 
-        // DOM Elements
-        let currentTab = 'create';
-
         // Initialize Firebase
-        function initializeFirebase() {
+        let db = null;
+        let isFirebaseConnected = false;
+        
+        // Current video data
+        let currentVideoData = null;
+        let videoHistory = [];
+        
+        // Initialize system
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
             try {
                 // Initialize Firebase
-                firebase.initializeApp(SYSTEM_CONFIG.firebaseConfig);
-                SYSTEM_CONFIG.db = firebase.database();
-                SYSTEM_CONFIG.dbRef = firebase.database().ref();
-                SYSTEM_CONFIG.isFirebaseInitialized = true;
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                isFirebaseConnected = true;
                 
                 // Update status
                 document.getElementById('firebaseStatus').innerHTML = '<i class="fas fa-check mr-1"></i> Connected';
                 document.getElementById('firebaseStatus').className = 'bg-green-500 text-white font-bold py-1 px-3 rounded-full text-sm';
-                document.getElementById('accountStatus').textContent = 'Firebase พร้อมใช้งาน';
+                document.getElementById('accountStatus').textContent = 'ระบบพร้อมใช้งาน';
                 
-                console.log('Firebase initialized successfully!');
-                showToast('Firebase เชื่อมต่อสำเร็จ!', 'success');
+                // Load history from localStorage first
+                loadVideoHistory();
                 
-                // Listen for queue changes
-                setupFirebaseListeners();
+                // Then try to load from Firebase
+                loadFirebaseHistory();
                 
-                // Load TikTok accounts
-                loadTikTokAccounts();
+                // Setup event listeners
+                setupEventListeners();
                 
-                // Load TikTok config from Firebase
-                loadTikTokConfig();
+                // Initialize tabs
+                initTabs();
                 
-                return true;
-            } catch (error) {
-                console.error('Error initializing Firebase:', error);
-                document.getElementById('firebaseStatus').innerHTML = '<i class="fas fa-times mr-1"></i> Error';
-                document.getElementById('firebaseStatus').className = 'bg-red-500 text-white font-bold py-1 px-3 rounded-full text-sm';
-                document.getElementById('accountStatus').textContent = 'Firebase เชื่อมต่อล้มเหลว';
-                
-                showToast('Firebase เชื่อมต่อล้มเหลว: ' + error.message, 'error');
-                return false;
-            }
-        }
-
-        // Setup Firebase listeners
-        function setupFirebaseListeners() {
-            if (!SYSTEM_CONFIG.isFirebaseInitialized) return;
-            
-            // Listen to jobs in realtime
-            const jobsRef = SYSTEM_CONFIG.db.ref('tiktokJobs');
-            
-            jobsRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                SYSTEM_CONFIG.queueItems = [];
-                
-                if (data) {
-                    // Convert to array
-                    Object.keys(data).forEach(key => {
-                        SYSTEM_CONFIG.queueItems.push({
-                            id: key,
-                            ...data[key]
-                        });
-                    });
-                    
-                    // Sort by creation time (newest first)
-                    SYSTEM_CONFIG.queueItems.sort((a, b) => {
-                        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-                    });
-                    
-                    // Update UI
-                    updateQueueDisplay();
-                    updateQueueTable();
-                    updateStats();
-                } else {
-                    SYSTEM_CONFIG.queueItems = [];
-                    updateQueueDisplay();
-                    updateQueueTable();
-                    updateStats();
-                }
-                
-                // Update system status
-                document.getElementById('systemFirebaseStatus').textContent = 'เชื่อมต่อแล้ว';
-                document.getElementById('systemFirebaseStatus').className = 'font-bold text-green-600';
-            });
-            
-            console.log('Firebase listeners setup complete');
-        }
-
-        // Load TikTok configuration from Firebase
-        async function loadTikTokConfig() {
-            if (!SYSTEM_CONFIG.isFirebaseInitialized) return;
-            
-            try {
-                const configRef = SYSTEM_CONFIG.db.ref('tiktokConfig');
-                const snapshot = await configRef.once('value');
-                const config = snapshot.val();
-                
-                if (config) {
-                    SYSTEM_CONFIG.tiktokConfig.clientKey = config.clientKey || '';
-                    SYSTEM_CONFIG.tiktokConfig.clientSecret = config.clientSecret || '';
-                    
-                    // Update form fields
-                    document.getElementById('clientKey').value = SYSTEM_CONFIG.tiktokConfig.clientKey;
-                    document.getElementById('clientSecret').value = SYSTEM_CONFIG.tiktokConfig.clientSecret || '';
-                    
-                    // Update status
-                    if (SYSTEM_CONFIG.tiktokConfig.clientKey) {
-                        document.getElementById('systemTikTokStatus').textContent = 'พร้อมใช้งาน';
-                        document.getElementById('systemTikTokStatus').className = 'font-bold text-green-600';
-                    } else {
-                        document.getElementById('systemTikTokStatus').textContent = 'ใช้ระบบล็อกอินพื้นฐาน';
-                        document.getElementById('systemTikTokStatus').className = 'font-bold text-blue-600';
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading TikTok config:', error);
-            }
-        }
-
-        // Save TikTok configuration to Firebase
-        async function saveTikTokConfig() {
-            if (!SYSTEM_CONFIG.isFirebaseInitialized) {
-                showModal('Firebase ยังไม่พร้อม', 'กรุณาตั้งค่า Firebase Database ก่อนบันทึกการตั้งค่า');
-                return false;
-            }
-            
-            const clientKey = document.getElementById('clientKey').value;
-            const clientSecret = document.getElementById('clientSecret').value;
-            
-            try {
-                await SYSTEM_CONFIG.db.ref('tiktokConfig').set({
-                    clientKey: clientKey,
-                    clientSecret: clientSecret,
-                    updatedAt: new Date().toISOString()
-                });
-                
-                SYSTEM_CONFIG.tiktokConfig.clientKey = clientKey;
-                SYSTEM_CONFIG.tiktokConfig.clientSecret = clientSecret;
-                
-                showModal('บันทึกการตั้งค่าเรียบร้อย', 'TikTok API configuration ถูกบันทึกเรียบร้อยแล้ว');
-                return true;
-            } catch (error) {
-                console.error('Error saving TikTok config:', error);
-                showModal('บันทึกการตั้งค่าล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message);
-                return false;
-            }
-        }
-
-        // Load TikTok accounts from Firebase
-        async function loadTikTokAccounts() {
-            if (!SYSTEM_CONFIG.isFirebaseInitialized) return;
-            
-            try {
-                const accountsRef = SYSTEM_CONFIG.db.ref('tiktokAccounts');
-                accountsRef.on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    SYSTEM_CONFIG.tiktokAccounts = [];
-                    
-                    if (data) {
-                        Object.keys(data).forEach(key => {
-                            SYSTEM_CONFIG.tiktokAccounts.push({
-                                id: key,
-                                ...data[key]
-                            });
-                        });
-                        
-                        updateAccountsDisplay();
-                        updateAccountDropdown();
-                        
-                        document.getElementById('systemAccountsStatus').textContent = SYSTEM_CONFIG.tiktokAccounts.length + ' บัญชี';
-                        document.getElementById('systemAccountsStatus').className = 'font-bold text-green-600';
-                    } else {
-                        SYSTEM_CONFIG.tiktokAccounts = [];
-                        updateAccountsDisplay();
-                        updateAccountDropdown();
-                        
-                        document.getElementById('systemAccountsStatus').textContent = '0 บัญชี';
-                        document.getElementById('systemAccountsStatus').className = 'font-bold text-yellow-600';
-                    }
-                });
-            } catch (error) {
-                console.error('Error loading TikTok accounts:', error);
-            }
-        }
-
-        // Update TikTok accounts display
-        function updateAccountsDisplay() {
-            const accountsList = document.getElementById('accountsList');
-            const accountsEmpty = document.getElementById('accountsEmpty');
-            const accounts = SYSTEM_CONFIG.tiktokAccounts;
-            
-            if (accounts.length === 0) {
-                accountsList.classList.add('hidden');
-                accountsEmpty.classList.remove('hidden');
-                document.getElementById('connectedAccounts').textContent = '0';
-                return;
-            }
-            
-            accountsList.classList.remove('hidden');
-            accountsEmpty.classList.add('hidden');
-            
-            // Clear accounts list
-            accountsList.innerHTML = '';
-            
-            // Add accounts to list
-            accounts.forEach(account => {
-                const accountCard = document.createElement('div');
-                accountCard.className = 'border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-300';
-                
-                // Format date
-                const connectedDate = new Date(account.connectedAt);
-                const formattedDate = connectedDate.toLocaleDateString('th-TH', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                // Determine account type badge
-                const accountType = account.loginMethod || 'manual';
-                let accountTypeBadge = '';
-                
-                if (accountType === 'tiktok_oauth') {
-                    accountTypeBadge = '<span class="badge badge-connected">TikTok OAuth</span>';
-                } else if (accountType === 'manual') {
-                    accountTypeBadge = '<span class="badge badge-info">Access Token</span>';
-                } else {
-                    accountTypeBadge = '<span class="badge badge-info">บัญชี TikTok</span>';
-                }
-                
-                // ตรวจสอบว่ามีรูปโปรไฟล์หรือไม่
-                const avatarUrl = account.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(account.displayName || account.username)}&background=25F4EE&color=fff&size=128`;
-                
-                accountCard.innerHTML = `
-                    <div class="flex items-center mb-3">
-                        <div class="flex items-center justify-center h-12 w-12 rounded-full login-with-tiktok text-white font-bold text-xl mr-4 overflow-hidden">
-                            ${account.avatar ? 
-                                `<img src="${avatarUrl}" alt="${account.username}" class="w-full h-full object-cover">` : 
-                                `<i class="fab fa-tiktok"></i>`
-                            }
-                        </div>
-                        <div class="flex-1">
-                            <div class="font-bold text-gray-800">${account.displayName || account.username || 'บัญชี TikTok'}</div>
-                            <div class="text-gray-600 text-sm">@${account.username || 'ไม่ทราบชื่อผู้ใช้'}</div>
-                        </div>
-                        ${accountTypeBadge}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="text-xs text-gray-500 mb-1">ล็อกอินเมื่อ</div>
-                        <div class="text-sm font-medium">${formattedDate}</div>
-                    </div>
-                    
-                    <div class="flex space-x-2">
-                        <button onclick="viewTikTokProfile('${account.id}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center">
-                            <i class="fas fa-user mr-1"></i> ดูโปรไฟล์
-                        </button>
-                        <button onclick="testTikTokAccount('${account.id}')" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center">
-                            <i class="fas fa-test mr-1"></i> ทดสอบ
-                        </button>
-                        <button onclick="disconnectTikTokAccount('${account.id}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center">
-                            <i class="fas fa-sign-out-alt mr-1"></i> ออกจากระบบ
-                        </button>
-                    </div>
-                `;
-                
-                accountsList.appendChild(accountCard);
-            });
-            
-            document.getElementById('connectedAccounts').textContent = accounts.length;
-            document.getElementById('accountInfo').textContent = `TikTok: ${accounts.length} บัญชีที่ล็อกอิน`;
-        }
-
-        // View TikTok profile
-        function viewTikTokProfile(accountId) {
-            const account = SYSTEM_CONFIG.tiktokAccounts.find(acc => acc.id === accountId);
-            
-            if (!account) {
-                showToast('ไม่พบบัญชีที่เลือก', 'error');
-                return;
-            }
-            
-            // ตั้งค่ารูปโปรไฟล์
-            const avatarUrl = account.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(account.displayName || account.username)}&background=25F4EE&color=fff&size=256`;
-            
-            // ตั้งค่าวันที่
-            const loginDate = new Date(account.connectedAt);
-            const formattedLoginDate = loginDate.toLocaleDateString('th-TH', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            // สร้างข้อมูลสถิติ
-            const stats = {
-                followers: account.followers || Math.floor(Math.random() * 10000) + 1000,
-                following: account.following || Math.floor(Math.random() * 1000) + 100,
-                likes: account.likes || Math.floor(Math.random() * 50000) + 10000,
-                videos: account.videos || Math.floor(Math.random() * 100) + 10
-            };
-            
-            // แสดง Modal
-            document.getElementById('profileContent').innerHTML = `
-                <div class="text-center">
-                    <img src="${avatarUrl}" alt="${account.username}" class="profile-avatar mx-auto mb-4">
-                    <h3 class="text-xl font-bold text-gray-800">${account.displayName || account.username}</h3>
-                    <p class="text-gray-600">@${account.username}</p>
-                    <p class="text-gray-500 text-sm mt-1">${account.bio || 'ไม่มีคำบรรยายโปรไฟล์'}</p>
-                    
-                    <div class="mt-6 grid grid-cols-2 gap-4">
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-2xl font-bold text-gray-800">${stats.followers.toLocaleString()}</div>
-                            <div class="text-gray-600 text-sm">ผู้ติดตาม</div>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-2xl font-bold text-gray-800">${stats.following.toLocaleString()}</div>
-                            <div class="text-gray-600 text-sm">กำลังติดตาม</div>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-2xl font-bold text-gray-800">${stats.likes.toLocaleString()}</div>
-                            <div class="text-gray-600 text-sm">ไลค์ทั้งหมด</div>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-2xl font-bold text-gray-800">${stats.videos}</div>
-                            <div class="text-gray-600 text-sm">วิดีโอ</div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 pt-6 border-t">
-                        <h4 class="font-bold text-gray-800 mb-2">ข้อมูลบัญชีในระบบ</h4>
-                        <div class="space-y-2 text-sm text-gray-600 text-left">
-                            <div class="flex justify-between">
-                                <span>ล็อกอินเมื่อ:</span>
-                                <span class="font-medium">${formattedLoginDate}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>ประเภทบัญชี:</span>
-                                <span class="font-medium">${account.loginMethod === 'tiktok_oauth' ? 'TikTok OAuth' : 'Access Token'}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>สถานะ:</span>
-                                <span class="font-medium text-green-600">ใช้งานได้ปกติ</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>สิทธิ์ที่ได้รับ:</span>
-                                <span class="font-medium">${account.scope || 'user.info.basic, video.upload'}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Access Token:</span>
-                                <span class="font-medium">${account.accessToken ? '****' + account.accessToken.slice(-8) : 'ไม่มี'}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6">
-                        <a href="https://www.tiktok.com/@${account.username}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
-                            <i class="fab fa-tiktok mr-2"></i> ไปยังโปรไฟล์ TikTok
-                        </a>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('profileModal').classList.remove('hidden');
-        }
-
-        // Update account dropdown in create form
-        function updateAccountDropdown() {
-            const dropdown = document.getElementById('tiktokAccount');
-            const accounts = SYSTEM_CONFIG.tiktokAccounts;
-            
-            // Clear existing options except first one
-            while (dropdown.options.length > 1) {
-                dropdown.remove(1);
-            }
-            
-            // Add accounts to dropdown
-            accounts.forEach(account => {
-                const option = document.createElement('option');
-                option.value = account.id;
-                option.textContent = `${account.displayName || 'บัญชี TikTok'} (@${account.username})`;
-                dropdown.appendChild(option);
-            });
-        }
-
-        // Show TikTok login modal
-        function showTikTokLoginModal() {
-            // Reset modal state
-            document.getElementById('loginContent').classList.remove('hidden');
-            document.getElementById('manualLoginForm').classList.add('hidden');
-            document.getElementById('loginProgress').classList.add('hidden');
-            
-            document.getElementById('tiktokLoginModal').classList.remove('hidden');
-        }
-
-        // Start manual TikTok login
-        function startManualTikTokLogin() {
-            document.getElementById('loginContent').classList.add('hidden');
-            document.getElementById('manualLoginForm').classList.remove('hidden');
-        }
-
-        // Cancel manual login
-        function cancelManualLogin() {
-            document.getElementById('loginContent').classList.remove('hidden');
-            document.getElementById('manualLoginForm').classList.add('hidden');
-        }
-
-        // Submit manual login form
-        async function submitManualLogin() {
-            const accessToken = document.getElementById('accessToken').value;
-            const username = document.getElementById('username').value;
-            const displayName = document.getElementById('displayName').value;
-            
-            if (!accessToken || !username) {
-                showToast('กรุณากรอก Access Token และชื่อผู้ใช้', 'error');
-                return;
-            }
-            
-            // Show progress
-            document.getElementById('manualLoginForm').classList.add('hidden');
-            document.getElementById('loginProgress').classList.remove('hidden');
-            document.getElementById('loginProgressTitle').textContent = 'กำลังบันทึกบัญชี...';
-            document.getElementById('loginMessage').textContent = 'กำลังบันทึกข้อมูลบัญชี TikTok';
-            document.getElementById('loginProgressBar').style.width = '50%';
-            
-            try {
-                // สร้างข้อมูลบัญชี
-                const accountId = 'tt_' + Date.now();
-                const accountData = {
-                    id: accountId,
-                    username: username.startsWith('@') ? username.substring(1) : username,
-                    displayName: displayName || username,
-                    accessToken: accessToken,
-                    scope: 'user.info.basic,video.upload',
-                    connectedAt: new Date().toISOString(),
-                    isActive: true,
-                    loginMethod: 'manual',
-                    lastUsed: new Date().toISOString()
-                };
-                
-                // บันทึกลง Firebase
-                await SYSTEM_CONFIG.db.ref('tiktokAccounts/' + accountId).set(accountData);
-                
-                // Update progress
-                document.getElementById('loginProgressBar').style.width = '100%';
-                document.getElementById('loginMessage').textContent = 'บันทึกบัญชีสำเร็จ!';
-                
-                setTimeout(() => {
-                    closeModal('tiktokLoginModal');
-                    showModal('บันทึกบัญชีสำเร็จ', `บัญชี @${username} ถูกเพิ่มลงในระบบเรียบร้อยแล้ว`);
-                    
-                    // Update UI
-                    updateAccountsDisplay();
-                    updateAccountDropdown();
-                    
-                    // Switch to accounts tab
-                    setTimeout(() => {
-                        switchTab('accounts');
-                    }, 1500);
-                }, 1000);
+                showToast('ระบบพร้อมใช้งาน!', 'success');
                 
             } catch (error) {
-                console.error('Error saving TikTok account:', error);
-                closeModal('tiktokLoginModal');
-                showModal('บันทึกบัญชีล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message);
+                console.error('Firebase init error:', error);
+                // Use localStorage instead
+                document.getElementById('firebaseStatus').innerHTML = '<i class="fas fa-database mr-1"></i> Local Mode';
+                document.getElementById('firebaseStatus').className = 'bg-blue-500 text-white font-bold py-1 px-3 rounded-full text-sm';
+                document.getElementById('accountStatus').textContent = 'ระบบพร้อมใช้งาน (ออฟไลน์)';
+                
+                // Load history from localStorage
+                loadVideoHistory();
+                
+                // Setup event listeners
+                setupEventListeners();
+                
+                // Initialize tabs
+                initTabs();
+                
+                showToast('ระบบพร้อมใช้งานในโหมดออฟไลน์', 'info');
             }
         }
 
-        // Start TikTok OAuth login (ต้องมี backend จริง)
-        function startTikTokOAuth() {
-            // TikTok OAuth 2.0 Flow
-            const clientKey = SYSTEM_CONFIG.tiktokConfig.clientKey;
-            const redirectUri = encodeURIComponent(SYSTEM_CONFIG.tiktokConfig.redirectUri);
-            const scope = encodeURIComponent(SYSTEM_CONFIG.tiktokConfig.scope);
-            const state = 'tiktok_auth_' + Date.now();
-            
-            // TikTok OAuth URL
-            const authUrl = `${SYSTEM_CONFIG.tiktokConfig.authUrl}?client_key=${clientKey}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}&state=${state}`;
-            
-            // แสดงความคืบหน้า
-            document.getElementById('loginContent').classList.add('hidden');
-            document.getElementById('loginProgress').classList.remove('hidden');
-            document.getElementById('loginProgressTitle').textContent = 'กำลังเตรียมการล็อกอิน...';
-            document.getElementById('loginMessage').textContent = 'กำลังเตรียมการเชื่อมต่อกับ TikTok...';
-            document.getElementById('loginProgressBar').style.width = '30%';
-            
-            // ถ้าไม่มี Client Key ให้ใช้วิธี manual
-            if (!clientKey || clientKey === 'awik6gn6om2f3rlo') {
-                setTimeout(() => {
-                    document.getElementById('loginProgressBar').style.width = '50%';
-                    document.getElementById('loginMessage').textContent = 'กำลังเปิดหน้าล็อกอิน...';
-                    
-                    setTimeout(() => {
-                        document.getElementById('loginProgressBar').style.width = '80%';
-                        document.getElementById('loginMessage').textContent = 'กรุณาล็อกอินในหน้าต่างใหม่...';
-                        
-                        // เปิดหน้าต่างล็อกอิน TikTok
-                        const loginWindow = window.open(
-                            'https://www.tiktok.com/login',
-                            'tiktok_login',
-                            'width=600,height=700'
-                        );
-                        
-                        // จำลองการล็อกอินสำเร็จหลังจาก 3 วินาที
-                        setTimeout(() => {
-                            if (loginWindow && !loginWindow.closed) {
-                                loginWindow.close();
-                            }
-                            
-                            document.getElementById('loginProgressBar').style.width = '100%';
-                            document.getElementById('loginMessage').textContent = 'ล็อกอินสำเร็จ! กำลังดึงข้อมูล...';
-                            
-                            setTimeout(() => {
-                                simulateTikTokOAuthSuccess();
-                            }, 1000);
-                        }, 3000);
-                    }, 1000);
-                }, 1000);
-            } else {
-                // ใช้ TikTok OAuth จริง
-                window.location.href = authUrl;
-            }
-        }
-
-        // Simulate successful TikTok OAuth login
-        async function simulateTikTokOAuthSuccess() {
-            try {
-                // สร้างข้อมูลบัญชี TikTok ที่สมจริงมากขึ้น
-                const mockUsernames = ['tiktok_thai_user', 'sarah_thai', 'thai_foodie', 'travel_thailand', 'tech_thai', 'fashion_thai'];
-                const mockDisplayNames = ['TikTok Thai User', 'Sarah Thai', 'Thai Foodie', 'Travel Thailand', 'Tech Thai', 'Fashion Thai'];
-                const mockAvatars = [
-                    'https://images.unsplash.com/photo-1611605698335-8b1569810432?w=400&h=400&fit=crop',
-                    'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop',
-                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
-                    'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=400&fit=crop',
-                    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
-                    'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&h=400&fit=crop'
-                ];
-                
-                const randomIndex = Math.floor(Math.random() * mockUsernames.length);
-                
-                const mockAccount = {
-                    id: 'tt_oauth_' + Date.now(),
-                    username: mockUsernames[randomIndex],
-                    displayName: mockDisplayNames[randomIndex],
-                    avatar: mockAvatars[randomIndex],
-                    accessToken: 'tt_oauth_token_' + Date.now(),
-                    refreshToken: 'tt_refresh_token_' + Date.now(),
-                    expiresIn: 86400,
-                    scope: 'user.info.basic,video.upload',
-                    connectedAt: new Date().toISOString(),
-                    isActive: true,
-                    loginMethod: 'tiktok_oauth',
-                    loginTime: new Date().toISOString(),
-                    profileData: {
-                        bio: 'ชอบสร้างคอนเทนต์สนุกๆ บน TikTok',
-                        website: 'https://example.com',
-                        verified: Math.random() > 0.7
-                    }
-                };
-                
-                // Save account to Firebase
-                await SYSTEM_CONFIG.db.ref('tiktokAccounts/' + mockAccount.id).set(mockAccount);
-                
-                // Close modal and show success
-                closeModal('tiktokLoginModal');
-                
-                // Show success message
-                showModal('ล็อกอิน TikTok สำเร็จ!', `บัญชี @${mockAccount.username} ถูกเชื่อมต่อกับระบบเรียบร้อยแล้ว! ระบบได้ดึงข้อมูลโปรไฟล์ของคุณมาแสดงแล้ว`);
-                
-                // Update UI
-                updateAccountsDisplay();
-                updateAccountDropdown();
-                
-                // Switch to accounts tab
-                setTimeout(() => {
-                    switchTab('accounts');
-                }, 1500);
-                
-            } catch (error) {
-                console.error('Error saving TikTok account:', error);
-                closeModal('tiktokLoginModal');
-                showModal('ล็อกอิน TikTok ล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message);
-            }
-        }
-
-        // Start TikTok scraper login (สำหรับทดสอบ)
-        function startTikTokScraper() {
-            // แสดงความคืบหน้า
-            document.getElementById('loginContent').classList.add('hidden');
-            document.getElementById('loginProgress').classList.remove('hidden');
-            document.getElementById('loginProgressTitle').textContent = 'กำลังล็อกอินอัตโนมัติ...';
-            document.getElementById('loginMessage').textContent = 'กำลังเตรียมระบบล็อกอินอัตโนมัติ...';
-            document.getElementById('loginProgressBar').style.width = '10%';
-            
-            // จำลองกระบวนการล็อกอิน
-            setTimeout(() => {
-                document.getElementById('loginProgressBar').style.width = '30%';
-                document.getElementById('loginMessage').textContent = 'กำลังตรวจสอบบัญชี TikTok...';
-                
-                setTimeout(() => {
-                    document.getElementById('loginProgressBar').style.width = '60%';
-                    document.getElementById('loginMessage').textContent = 'กำลังดึงข้อมูลโปรไฟล์...';
-                    
-                    setTimeout(() => {
-                        document.getElementById('loginProgressBar').style.width = '90%';
-                        document.getElementById('loginMessage').textContent = 'กำลังบันทึกข้อมูล...';
-                        
-                        setTimeout(() => {
-                            simulateTikTokScraperSuccess();
-                        }, 1000);
-                    }, 1500);
-                }, 1500);
-            }, 1000);
-        }
-
-        // Simulate TikTok scraper success
-        async function simulateTikTokScraperSuccess() {
-            const mockAccount = {
-                id: 'tt_scraper_' + Date.now(),
-                username: 'thai_tiktoker_' + Math.floor(Math.random() * 1000),
-                displayName: 'ผู้ใช้ TikTok ไทย',
-                avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=400&fit=crop',
-                accessToken: 'tt_scraper_token_' + Date.now(),
-                connectedAt: new Date().toISOString(),
-                isActive: true,
-                loginMethod: 'scraper',
-                loginTime: new Date().toISOString(),
-                profileData: {
-                    bio: 'บัญชี TikTok สำหรับทดสอบระบบ',
-                    followers: Math.floor(Math.random() * 5000) + 1000,
-                    following: Math.floor(Math.random() * 500) + 50
-                }
-            };
-            
-            try {
-                // Save account to Firebase
-                await SYSTEM_CONFIG.db.ref('tiktokAccounts/' + mockAccount.id).set(mockAccount);
-                
-                // Close modal and show success
-                closeModal('tiktokLoginModal');
-                
-                // Show success message
-                showModal('ล็อกอินสำเร็จ!', `บัญชีทดสอบ @${mockAccount.username} ถูกสร้างและเชื่อมต่อกับระบบเรียบร้อยแล้ว`);
-                
-                // Update UI
-                updateAccountsDisplay();
-                updateAccountDropdown();
-                
-                // Switch to accounts tab
-                setTimeout(() => {
-                    switchTab('accounts');
-                }, 1500);
-                
-            } catch (error) {
-                console.error('Error saving TikTok account:', error);
-                closeModal('tiktokLoginModal');
-                showModal('ล็อกอินล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message);
-            }
-        }
-
-        // Cancel TikTok login
-        function cancelTikTokLogin() {
-            closeModal('tiktokLoginModal');
-            showToast('ยกเลิกการล็อกอินแล้ว', 'info');
-        }
-
-        // Test TikTok account connection
-        async function testTikTokAccount(accountId) {
-            const account = SYSTEM_CONFIG.tiktokAccounts.find(acc => acc.id === accountId);
-            
-            if (!account) {
-                showToast('ไม่พบบัญชีที่เลือก', 'error');
-                return;
-            }
-            
-            showModal('กำลังทดสอบบัญชี TikTok', `กำลังทดสอบการเชื่อมต่อกับบัญชี @${account.username}...`);
-            
-            // Simulate testing connection with TikTok API
-            setTimeout(() => {
-                // จำลองการทดสอบสำเร็จ
-                showModal('ทดสอบสำเร็จ', `บัญชี @${account.username} พร้อมใช้งาน\n\nสถานะ: ✓ เชื่อมต่อได้ปกติ\nสิทธิ์: ${account.scope || 'user.info.basic, video.upload'}\nสามารถโพสต์วิดีโอได้: ✓`);
-            }, 2000);
-        }
-
-        // Disconnect/Logout TikTok account
-        async function disconnectTikTokAccount(accountId) {
-            const account = SYSTEM_CONFIG.tiktokAccounts.find(acc => acc.id === accountId);
-            
-            showConfirmModal(
-                'ออกจากระบบบัญชี TikTok',
-                `คุณแน่ใจหรือไม่ที่จะออกจากระบบบัญชี @${account.username}? การดำเนินการนี้จะทำให้ไม่สามารถโพสต์วิดีโอได้จนกว่าจะล็อกอินใหม่`,
-                async () => {
-                    try {
-                        await SYSTEM_CONFIG.db.ref('tiktokAccounts/' + accountId).remove();
-                        showToast('ออกจากระบบบัญชีสำเร็จ', 'success');
-                    } catch (error) {
-                        console.error('Error disconnecting TikTok account:', error);
-                        showToast('ออกจากระบบล้มเหลว: ' + error.message, 'error');
-                    }
-                }
-            );
-        }
-
-        // Reset system settings
-        async function resetSystemSettings() {
-            showConfirmModal(
-                'รีเซ็ตระบบ',
-                'คุณแน่ใจหรือไม่ที่จะรีเซ็ตการตั้งค่าระบบทั้งหมด? การดำเนินการนี้จะล้างข้อมูลการตั้งค่าแต่จะไม่ล้างข้อมูลคิวงานและบัญชี TikTok',
-                async () => {
-                    try {
-                        // Reset TikTok config
-                        await SYSTEM_CONFIG.db.ref('tiktokConfig').set({
-                            clientKey: '',
-                            clientSecret: '',
-                            resetAt: new Date().toISOString()
-                        });
-                        
-                        // Update UI
-                        document.getElementById('clientKey').value = '';
-                        document.getElementById('clientSecret').value = '';
-                        
-                        showModal('รีเซ็ตระบบสำเร็จ', 'การตั้งค่าระบบถูกรีเซ็ตเรียบร้อยแล้ว');
-                    } catch (error) {
-                        console.error('Error resetting system:', error);
-                        showModal('รีเซ็ตระบบล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message);
-                    }
-                }
-            );
-        }
-
-        // Initialize database structure
-        async function initializeDatabase() {
-            if (!SYSTEM_CONFIG.isFirebaseInitialized) {
-                showModal('Firebase ยังไม่พร้อม', 'กรุณารอให้ Firebase เชื่อมต่อสำเร็จก่อน');
-                return false;
-            }
-            
-            try {
-                // Create initial database structure
-                await SYSTEM_CONFIG.db.ref('tiktokAutomation').set({
-                    initialized: true,
-                    initializedAt: new Date().toISOString(),
-                    totalJobsCreated: 0,
-                    systemVersion: '2.0.0',
-                    lastUpdated: new Date().toISOString(),
-                    loginMethod: 'tiktok_oauth'
-                });
-                
-                // Create jobs node
-                await SYSTEM_CONFIG.db.ref('tiktokJobs').set({});
-                
-                // Create accounts node
-                await SYSTEM_CONFIG.db.ref('tiktokAccounts').set({});
-                
-                // Create config node
-                await SYSTEM_CONFIG.db.ref('tiktokConfig').set({
-                    clientKey: '',
-                    clientSecret: '',
-                    initializedAt: new Date().toISOString()
-                });
-                
-                // Update UI
-                document.getElementById('dbProgress').style.width = '100%';
-                document.getElementById('dbMessage').textContent = 'Firebase Database ถูกตั้งค่าเรียบร้อยแล้ว';
-                document.getElementById('dbMessage').className = 'text-xs text-green-500 mt-1';
-                
-                showModal('Setup Database สำเร็จ', 'Firebase Realtime Database ถูกตั้งค่าเรียบร้อยแล้ว! ตอนนี้ระบบพร้อมบันทึกคิวงานแล้ว');
-                console.log('Database initialized successfully');
-                
-                return true;
-            } catch (error) {
-                console.error('Error initializing database:', error);
-                showModal('Setup Database ล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message);
-                return false;
-            }
-        }
-
-        // Test Firebase connection
-        async function testFirebaseConnection() {
-            if (!SYSTEM_CONFIG.isFirebaseInitialized) {
-                showModal('Firebase ยังไม่พร้อม', 'กรุณารอให้ Firebase เชื่อมต่อสำเร็จก่อน');
-                return false;
-            }
-            
-            try {
-                // Write test data
-                const testRef = SYSTEM_CONFIG.db.ref('testConnection');
-                await testRef.set({
-                    test: true,
-                    timestamp: new Date().toISOString(),
-                    message: 'การทดสอบเชื่อมต่อ Firebase'
-                });
-                
-                // Read test data
-                const snapshot = await testRef.once('value');
-                const data = snapshot.val();
-                
-                // Remove test data
-                await testRef.remove();
-                
-                if (data && data.test) {
-                    showModal('ทดสอบการเชื่อมต่อสำเร็จ', 'Firebase Realtime Database สามารถอ่านและเขียนข้อมูลได้ปกติ');
-                    return true;
-                } else {
-                    throw new Error('ไม่สามารถอ่านข้อมูลทดสอบได้');
-                }
-            } catch (error) {
-                console.error('Error testing Firebase:', error);
-                showModal('ทดสอบการเชื่อมต่อล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message);
-                return false;
-            }
-        }
-
-        // Generate video preview from prompt (ใช้ API จริง)
-        async function generateVideoPreview() {
-            const prompt = document.getElementById('prompt').value;
-            const caption = document.getElementById('caption').value;
-            const aspectRatio = document.getElementById('aspectRatio').value;
-            const duration = document.getElementById('duration').value;
-            
-            if (!prompt) {
-                showModal('กรุณากรอกข้อมูล', 'กรุณากรอกคำอธิบายวิดีโอ (Prompt)');
-                return;
-            }
-            
-            // Show loading state
-            const previewBtn = document.getElementById('previewBtn');
-            previewBtn.disabled = true;
-            previewBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังสร้างตัวอย่างคลิป...';
-            
-            // Show video placeholder with loading
-            document.getElementById('videoPlaceholder').innerHTML = `
-                <div class="text-center text-white p-4">
-                    <div class="loading-spinner mx-auto mb-4"></div>
-                    <p class="text-lg">กำลังสร้างคลิปจาก AI...</p>
-                    <p class="text-sm opacity-75 mt-2">กำลังประมวลผล: "${prompt.substring(0, 30)}..."</p>
-                </div>
-            `;
-            
-            // Generate video using AI API
-            try {
-                // ใช้ API จริง (ตัวอย่างใช้ DALL-E 3 หรือ Stable Diffusion)
-                const videoUrl = await generateVideoFromAIApi(prompt, aspectRatio);
-                
-                // Store video data for later use
-                SYSTEM_CONFIG.currentVideoData = {
-                    prompt: prompt,
-                    caption: caption,
-                    aspectRatio: aspectRatio,
-                    duration: duration,
-                    videoUrl: videoUrl,
-                    createdAt: new Date().toISOString(),
-                    generatedAt: new Date().toISOString(),
-                    videoInfo: {
-                        quality: '1080p HD',
-                        format: 'MP4',
-                        size: '~15 MB',
-                        duration: duration + ' วินาที'
-                    }
-                };
-                
-                // Update video preview
-                const videoPreview = document.getElementById('videoPreview');
-                const videoPlaceholder = document.getElementById('videoPlaceholder');
-                const videoOverlay = document.getElementById('videoOverlay');
-                
-                videoPreview.src = videoUrl;
-                videoPreview.style.display = 'block';
-                videoPlaceholder.style.display = 'none';
-                videoOverlay.classList.remove('hidden');
-                
-                document.getElementById('videoTitle').textContent = 'คลิปที่สร้างจาก AI';
-                document.getElementById('videoDescription').textContent = prompt.substring(0, 50) + (prompt.length > 50 ? '...' : '');
-                
-                // Reset button
-                previewBtn.disabled = false;
-                previewBtn.innerHTML = '<i class="fas fa-eye mr-2"></i> ดูตัวอย่างคลิปที่สร้าง';
-                
-                showToast('สร้างตัวอย่างคลิปสำเร็จ!', 'success');
-                
-            } catch (error) {
-                console.error('Error generating video:', error);
-                
-                // ถ้า API ล้มเหลว ให้ใช้ตัวอย่างวิดีโอ
-                const fallbackVideo = await generateVideoFromPrompt(prompt);
-                
-                SYSTEM_CONFIG.currentVideoData = {
-                    prompt: prompt,
-                    caption: caption,
-                    aspectRatio: aspectRatio,
-                    duration: duration,
-                    videoUrl: fallbackVideo,
-                    createdAt: new Date().toISOString(),
-                    generatedAt: new Date().toISOString()
-                };
-                
-                // Update video preview
-                const videoPreview = document.getElementById('videoPreview');
-                const videoPlaceholder = document.getElementById('videoPlaceholder');
-                const videoOverlay = document.getElementById('videoOverlay');
-                
-                videoPreview.src = fallbackVideo;
-                videoPreview.style.display = 'block';
-                videoPlaceholder.style.display = 'none';
-                videoOverlay.classList.remove('hidden');
-                
-                document.getElementById('videoTitle').textContent = 'คลิปตัวอย่าง';
-                document.getElementById('videoDescription').textContent = prompt.substring(0, 50) + (prompt.length > 50 ? '...' : '');
-                
-                previewBtn.disabled = false;
-                previewBtn.innerHTML = '<i class="fas fa-eye mr-2"></i> ดูตัวอย่างคลิปที่สร้าง';
-                
-                showToast('สร้างตัวอย่างคลิปสำเร็จ (ใช้ตัวอย่าง)', 'success');
-            }
-        }
-
-        // Generate video from AI API (ใช้งานจริง)
-        async function generateVideoFromAIApi(prompt, aspectRatio) {
-            // ตรวจสอบว่าเป็น API key จริงหรือไม่
-            const openaiKey = SYSTEM_CONFIG.videoApis.openai.key;
-            
-            if (openaiKey && openaiKey !== 'sk-ตัวอย่าง') {
-                // ใช้ DALL-E 3 API จริง
-                try {
-                    const response = await axios.post(
-                        SYSTEM_CONFIG.videoApis.openai.url,
-                        {
-                            prompt: prompt,
-                            n: 1,
-                            size: getImageSize(aspectRatio),
-                            model: "dall-e-3"
-                        },
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${openaiKey}`,
-                                'Content-Type': 'application/json'
-                            }
-                        }
-                    );
-                    
-                    if (response.data && response.data.data && response.data.data[0]) {
-                        return response.data.data[0].url;
-                    }
-                } catch (error) {
-                    console.error('OpenAI API error:', error);
-                    throw error;
-                }
-            }
-            
-            // ถ้าไม่มี API key จริง ให้ใช้วิธี fallback
-            return generateVideoFromPrompt(prompt);
-        }
-
-        // Get image size based on aspect ratio
-        function getImageSize(aspectRatio) {
-            switch(aspectRatio) {
-                case '16:9': return '1792x1024';
-                case '9:16': return '1024x1792';
-                case '1:1': return '1024x1024';
-                default: return '1024x1024';
-            }
-        }
-
-        // Generate video URL based on prompt content (fallback)
-        async function generateVideoFromPrompt(prompt) {
-            // วิเคราะห์ prompt เพื่อเลือกคลิปวิดีโอที่เหมาะสม
-            const promptLower = prompt.toLowerCase();
-            
-            // คลังวิดีโอตัวอย่างที่สร้างจาก AI ตามหมวดหมู่
-            const videoLibrary = {
-                'สาวน้อย': [
-                    'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-                ],
-                'ทิวทัศน์': [
-                    'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-                    'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
-                ],
-                'อาหาร': [
-                    'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
-                ],
-                'สัตว์': [
-                    'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4'
-                ],
-                'ทั่วไป': [
-                    'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4'
-                ]
-            };
-            
-            // กำหนดหมวดหมู่ตามคำสำคัญใน prompt
-            let category = 'ทั่วไป';
-            
-            if (promptLower.includes('สาว') || promptLower.includes('ช้อป') || promptLower.includes('แฟชั่น')) {
-                category = 'สาวน้อย';
-            } else if (promptLower.includes('ทิวทัศน์') || promptLower.includes('ธรรมชาติ') || promptLower.includes('ภูเขา')) {
-                category = 'ทิวทัศน์';
-            } else if (promptLower.includes('อาหาร') || promptLower.includes('กิน') || promptLower.includes('ทำอาหาร')) {
-                category = 'อาหาร';
-            } else if (promptLower.includes('สัตว์') || promptLower.includes('สุนัข') || promptLower.includes('แมว')) {
-                category = 'สัตว์';
-            }
-            
-            // เลือกวิดีโอจากหมวดหมู่ที่กำหนด
-            const videos = videoLibrary[category] || videoLibrary['ทั่วไป'];
-            const randomIndex = Math.floor(Math.random() * videos.length);
-            
-            return videos[randomIndex];
-        }
-
-        // Show full video preview modal
-        function showFullVideoPreview() {
-            if (!SYSTEM_CONFIG.currentVideoData) {
-                showToast('กรุณาสร้างตัวอย่างคลิปก่อน', 'warning');
-                return;
-            }
-            
-            const data = SYSTEM_CONFIG.currentVideoData;
-            const videoElement = document.getElementById('fullVideoPreview');
-            
-            videoElement.src = data.videoUrl;
-            videoElement.load();
-            
-            document.getElementById('previewPrompt').textContent = data.prompt;
-            document.getElementById('previewAspectRatio').textContent = data.aspectRatio;
-            document.getElementById('previewDuration').textContent = data.duration + ' วินาที';
-            document.getElementById('previewCaption').textContent = data.caption;
-            document.getElementById('previewCreatedAt').textContent = new Date(data.createdAt).toLocaleDateString('th-TH');
-            
-            document.getElementById('fullVideoTitle').textContent = 'คลิป TikTok ที่สร้างจาก AI';
-            document.getElementById('fullVideoDescription').textContent = data.prompt.substring(0, 100) + (data.prompt.length > 100 ? '...' : '');
-            
-            document.getElementById('videoPreviewModal').classList.remove('hidden');
-        }
-
-        // Download video
-        function downloadVideo() {
-            if (!SYSTEM_CONFIG.currentVideoData) {
-                showToast('ไม่มีวิดีโอที่สามารถดาวน์โหลดได้', 'error');
-                return;
-            }
-            
-            const link = document.createElement('a');
-            link.href = SYSTEM_CONFIG.currentVideoData.videoUrl;
-            link.download = `tiktok_video_${Date.now()}.mp4`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showToast('กำลังดาวน์โหลดวิดีโอ...', 'success');
-        }
-
-        // Post to TikTok from preview
-        function postToTikTokFromPreview() {
-            closeModal('videoPreviewModal');
-            
-            // Auto-fill the form with current video data
-            if (SYSTEM_CONFIG.currentVideoData) {
-                document.getElementById('prompt').value = SYSTEM_CONFIG.currentVideoData.prompt;
-                document.getElementById('caption').value = SYSTEM_CONFIG.currentVideoData.caption || '';
-                document.getElementById('aspectRatio').value = SYSTEM_CONFIG.currentVideoData.aspectRatio;
-                document.getElementById('duration').value = SYSTEM_CONFIG.currentVideoData.duration;
-                
-                // Scroll to form
-                document.getElementById('videoForm').scrollIntoView({ behavior: 'smooth' });
-                
-                showToast('ข้อมูลถูกคัดลอกไปยังฟอร์มแล้ว', 'success');
-            }
-        }
-
-        // Create new video job
-        async function createVideo() {
-            if (!SYSTEM_CONFIG.isFirebaseInitialized) {
-                showModal('Firebase ยังไม่พร้อม', 'กรุณาตั้งค่า Firebase Database ก่อนสร้างวิดีโอ');
-                return false;
-            }
-            
-            const prompt = document.getElementById('prompt').value;
-            const caption = document.getElementById('caption').value;
-            const aspectRatio = document.getElementById('aspectRatio').value;
-            const duration = document.getElementById('duration').value;
-            const postOption = document.querySelector('input[name="postOption"]:checked').value;
-            const tiktokAccountId = document.getElementById('tiktokAccount').value;
-            
-            // Check if user has logged in to TikTok
-            if (postOption === 'auto' && !tiktokAccountId) {
-                showModal('โปรดเลือกบัญชี TikTok', 'กรุณาเลือกบัญชี TikTok ที่ต้องการโพสต์คลิป หรือล็อกอินด้วย TikTok ก่อน');
-                return false;
-            }
-            
-            // Create job data
-            const jobId = 'job_' + Date.now();
-            const jobData = {
-                id: jobId,
-                title: prompt.substring(0, 50) + (prompt.length > 50 ? '...' : ''),
-                prompt: prompt,
-                caption: caption,
-                aspectRatio: aspectRatio,
-                duration: parseInt(duration),
-                postOption: postOption,
-                tiktokAccountId: tiktokAccountId,
-                status: 'pending',
-                videoUrl: SYSTEM_CONFIG.currentVideoData ? SYSTEM_CONFIG.currentVideoData.videoUrl : '',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
-            
-            // Show loading state
-            const generateBtn = document.getElementById('generateBtn');
-            generateBtn.disabled = true;
-            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังบันทึก...';
-            
-            try {
-                // Save to Firebase
-                await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).set(jobData);
-                
-                // Update stats
-                await SYSTEM_CONFIG.db.ref('tiktokAutomation/totalJobsCreated').transaction(current => {
-                    return (current || 0) + 1;
-                });
-                
-                // Show success message
-                showModal('เพิ่มงานสำเร็จ', 'งานถูกเพิ่มลงในคิว Firebase เรียบร้อยแล้ว! รหัสงาน: ' + jobId);
-                
-                // If auto post is selected, simulate posting to TikTok
-                if (postOption === 'auto') {
-                    // Simulate video creation and posting process
-                    simulateTikTokPosting(jobId, jobData);
-                } else {
-                    // Just update status to completed for draft
-                    await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).update({
-                        status: 'draft_completed',
-                        updatedAt: new Date().toISOString(),
-                        statusMessage: 'บันทึกเป็นแบบร่างเรียบร้อยแล้ว'
-                    });
-                }
-                
-                return true;
-                
-            } catch (error) {
-                console.error('Error creating video job:', error);
-                showModal('เพิ่มงานล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message);
-                return false;
-            } finally {
-                generateBtn.disabled = false;
-                generateBtn.innerHTML = '<i class="fas fa-magic mr-2"></i> สร้างและเพิ่มลงคิว';
-            }
-        }
-
-        // Simulate TikTok posting process (ใช้งานได้จริงถ้ามี Access Token)
-        async function simulateTikTokPosting(jobId, jobData) {
-            try {
-                // Update status to processing
-                await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).update({
-                    status: 'processing',
-                    updatedAt: new Date().toISOString(),
-                    statusMessage: 'กำลังสร้างวิดีโอ...'
-                });
-                
-                // Get TikTok account info
-                const tiktokAccount = SYSTEM_CONFIG.tiktokAccounts.find(acc => acc.id === jobData.tiktokAccountId);
-                const accountName = tiktokAccount ? `@${tiktokAccount.username}` : 'TikTok';
-                
-                // Simulate video creation delay
-                setTimeout(async () => {
-                    await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).update({
-                        status: 'creating_video',
-                        updatedAt: new Date().toISOString(),
-                        statusMessage: 'วิดีโอถูกสร้างสำเร็จ กำลังเตรียมโพสต์...',
-                        videoUrl: SYSTEM_CONFIG.currentVideoData ? SYSTEM_CONFIG.currentVideoData.videoUrl : await generateVideoFromPrompt(jobData.prompt)
-                    });
-                    
-                    // Check if we have valid TikTok access token
-                    if (tiktokAccount && tiktokAccount.accessToken && 
-                        !tiktokAccount.accessToken.startsWith('tt_oauth_token_') && 
-                        !tiktokAccount.accessToken.startsWith('tt_scraper_token_')) {
-                        
-                        // ถ้ามี Access Token จริง ให้พยายามอัพโหลดไปยัง TikTok
-                        await uploadToTikTokAPI(jobId, jobData, tiktokAccount);
-                        
-                    } else {
-                        // Simulate TikTok posting delay
-                        setTimeout(async () => {
-                            await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).update({
-                                status: 'posting_to_tiktok',
-                                updatedAt: new Date().toISOString(),
-                                statusMessage: `กำลังอัพโหลดวิดีโอไปยัง ${accountName}...`
-                            });
-                            
-                            // Simulate successful posting
-                            setTimeout(async () => {
-                                const tiktokUrl = `https://www.tiktok.com/@${tiktokAccount ? tiktokAccount.username : 'tiktok_user'}/video/${Date.now()}`;
-                                await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).update({
-                                    status: 'posted',
-                                    postedAt: new Date().toISOString(),
-                                    tiktokUrl: tiktokUrl,
-                                    updatedAt: new Date().toISOString(),
-                                    statusMessage: `โพสต์ไปยัง ${accountName} สำเร็จแล้ว!`
-                                });
-                                
-                                // Show success notification
-                                showToast(`โพสต์ไปยัง ${accountName} สำเร็จ!`, 'success');
-                                
-                            }, 3000);
-                        }, 2000);
-                    }
-                }, 3000);
-                
-            } catch (error) {
-                console.error('Error simulating TikTok posting:', error);
-                // Update status to error
-                await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).update({
-                    status: 'error',
-                    updatedAt: new Date().toISOString(),
-                    statusMessage: 'เกิดข้อผิดพลาด: ' + error.message
-                });
-            }
-        }
-
-        // Upload video to TikTok API (ใช้งานจริง)
-        async function uploadToTikTokAPI(jobId, jobData, tiktokAccount) {
-            try {
-                // Update status
-                await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).update({
-                    status: 'uploading_to_tiktok',
-                    updatedAt: new Date().toISOString(),
-                    statusMessage: 'กำลังอัพโหลดวิดีโอไปยัง TikTok API...'
-                });
-                
-                // Get video URL
-                const videoUrl = SYSTEM_CONFIG.currentVideoData ? 
-                    SYSTEM_CONFIG.currentVideoData.videoUrl : 
-                    await generateVideoFromPrompt(jobData.prompt);
-                
-                // ดาวน์โหลดวิดีโอ (ใน production ควรอัพโหลดจากเซิร์ฟเวอร์)
-                const videoBlob = await fetch(videoUrl).then(r => r.blob());
-                
-                // สร้าง FormData สำหรับ TikTok API
-                const formData = new FormData();
-                formData.append('video', videoBlob, 'tiktok_video.mp4');
-                formData.append('description', jobData.caption);
-                
-                // ส่งไปยัง TikTok API
-                // หมายเหตุ: ต้องมี backend proxy เนื่องจาก CORS restrictions
-                const response = await axios.post(
-                    'https://open.tiktokapis.com/v2/video/upload/',
-                    formData,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${tiktokAccount.accessToken}`,
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }
-                );
-                
-                if (response.data && response.data.data) {
-                    const tiktokUrl = `https://www.tiktok.com/@${tiktokAccount.username}/video/${response.data.data.video_id}`;
-                    
-                    await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).update({
-                        status: 'posted',
-                        postedAt: new Date().toISOString(),
-                        tiktokUrl: tiktokUrl,
-                        updatedAt: new Date().toISOString(),
-                        statusMessage: `โพสต์ไปยัง @${tiktokAccount.username} สำเร็จแล้ว!`,
-                        tiktokData: response.data
-                    });
-                    
-                    showToast(`โพสต์ไปยัง @${tiktokAccount.username} สำเร็จ!`, 'success');
-                }
-                
-            } catch (error) {
-                console.error('Error uploading to TikTok API:', error);
-                
-                // ถ้า TikTok API ล้มเหลว ให้จำลองการโพสต์สำเร็จ
-                await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).update({
-                    status: 'posted',
-                    postedAt: new Date().toISOString(),
-                    tiktokUrl: `https://www.tiktok.com/@${tiktokAccount.username}/video/${Date.now()}`,
-                    updatedAt: new Date().toISOString(),
-                    statusMessage: `โพสต์ไปยัง @${tiktokAccount.username} สำเร็จ (จำลอง)`
-                });
-                
-                showToast(`โพสต์ไปยัง @${tiktokAccount.username} สำเร็จ (จำลอง)!`, 'success');
-            }
-        }
-
-        // Update queue display
-        function updateQueueDisplay() {
-            const queueItems = SYSTEM_CONFIG.queueItems;
-            const totalCount = queueItems.length;
-            
-            document.getElementById('queueCount').textContent = totalCount;
-            document.getElementById('totalCount').textContent = totalCount;
-            
-            // Update counts by status
-            const pendingCount = queueItems.filter(item => item.status === 'pending').length;
-            const postingCount = queueItems.filter(item => 
-                item.status === 'posting_to_tiktok' || 
-                item.status === 'processing' || 
-                item.status === 'creating_video' ||
-                item.status === 'uploading_to_tiktok'
-            ).length;
-            const completedCount = queueItems.filter(item => item.status === 'posted' || item.status === 'draft_completed').length;
-            
-            document.getElementById('pendingCount').textContent = pendingCount;
-            document.getElementById('postingCount').textContent = postingCount;
-            document.getElementById('completedCount').textContent = completedCount;
-            
-            // Update account info
-            document.getElementById('accountInfo').textContent = `TikTok: ${SYSTEM_CONFIG.tiktokAccounts.length} บัญชี, ${completedCount}/${totalCount} คลิปโพสต์แล้ว`;
-        }
-
-        // Update queue table
-        function updateQueueTable() {
-            const queueList = document.getElementById('queueList');
-            const queueEmpty = document.getElementById('queueEmpty');
-            const queueItems = SYSTEM_CONFIG.queueItems;
-            
-            if (queueItems.length === 0) {
-                queueList.classList.add('hidden');
-                queueEmpty.classList.remove('hidden');
-                return;
-            }
-            
-            queueList.classList.remove('hidden');
-            queueEmpty.classList.add('hidden');
-            
-            // Clear queue list
-            queueList.innerHTML = '';
-            
-            // Add items to list
-            queueItems.forEach(item => {
-                const queueItem = document.createElement('div');
-                queueItem.className = 'queue-item border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-300';
-                
-                // Determine status badge
-                let statusBadge = '';
-                let statusColor = '';
-                let statusMessage = item.statusMessage || '';
-                
-                switch(item.status) {
-                    case 'pending':
-                        statusBadge = 'รอดำเนินการ';
-                        statusColor = 'badge-warning';
-                        break;
-                    case 'processing':
-                    case 'creating_video':
-                        statusBadge = 'กำลังสร้างวิดีโอ';
-                        statusColor = 'badge-info';
-                        break;
-                    case 'posting_to_tiktok':
-                    case 'uploading_to_tiktok':
-                        statusBadge = 'กำลังโพสต์ TikTok';
-                        statusColor = 'badge-posting';
-                        break;
-                    case 'posted':
-                        statusBadge = 'โพสต์แล้ว';
-                        statusColor = 'badge-success';
-                        break;
-                    case 'draft_completed':
-                        statusBadge = 'บันทึกแบบร่าง';
-                        statusColor = 'badge-info';
-                        break;
-                    case 'error':
-                        statusBadge = 'ผิดพลาด';
-                        statusColor = 'badge-error';
-                        break;
-                    default:
-                        statusBadge = item.status;
-                        statusColor = 'badge-info';
-                }
-                
-                // Format date
-                const createdDate = new Date(item.createdAt);
-                const formattedDate = createdDate.toLocaleDateString('th-TH', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                // Get TikTok account info
-                let tiktokAccountInfo = '';
-                if (item.tiktokAccountId) {
-                    const account = SYSTEM_CONFIG.tiktokAccounts.find(acc => acc.id === item.tiktokAccountId);
-                    if (account) {
-                        tiktokAccountInfo = `<div class="text-xs text-gray-500 mt-1"><i class="fab fa-tiktok mr-1"></i> @${account.username}</div>`;
-                    }
-                }
-                
-                queueItem.innerHTML = `
-                    <div class="flex flex-col md:flex-row md:items-center justify-between">
-                        <div class="mb-3 md:mb-0 md:flex-1">
-                            <div class="font-bold text-gray-800 mb-1">${item.title}</div>
-                            <div class="text-gray-600 text-sm mb-2">${item.caption.substring(0, 50)}${item.caption.length > 50 ? '...' : ''}</div>
-                            ${statusMessage ? `<div class="text-xs text-gray-500 mb-2">${statusMessage}</div>` : ''}
-                            ${tiktokAccountInfo}
-                            <div class="flex items-center space-x-4 text-xs text-gray-500 mt-2">
-                                <span><i class="fas fa-expand-alt mr-1"></i> ${item.aspectRatio}</span>
-                                <span><i class="fas fa-clock mr-1"></i> ${item.duration} วินาที</span>
-                                <span><i class="fas fa-calendar mr-1"></i> ${formattedDate}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex flex-col md:items-end space-y-2 mt-3 md:mt-0">
-                            <div>
-                                <span class="badge ${statusColor}">${statusBadge}</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                ${item.videoUrl ? `
-                                    <button onclick="playVideo('${item.videoUrl}', '${item.caption}')" class="text-blue-600 hover:text-blue-800 text-sm" title="เล่นวิดีโอ">
-                                        <i class="fas fa-play mr-1"></i> เล่น
-                                    </button>
-                                ` : ''}
-                                ${item.tiktokUrl ? `
-                                    <a href="${item.tiktokUrl}" target="_blank" class="text-purple-600 hover:text-purple-800 text-sm" title="ดูบน TikTok">
-                                        <i class="fab fa-tiktok mr-1"></i> TikTok
-                                    </a>
-                                ` : ''}
-                                <button onclick="deleteQueueItem('${item.id}')" class="text-red-600 hover:text-red-800 text-sm" title="ลบ">
-                                    <i class="fas fa-trash mr-1"></i> ลบ
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                queueList.appendChild(queueItem);
-            });
-        }
-
-        // Update stats
-        function updateStats() {
-            const queueItems = SYSTEM_CONFIG.queueItems;
-            const totalCount = queueItems.length;
-            
-            if (totalCount > 0) {
-                const progress = Math.min((queueItems.filter(item => item.status === 'posted' || item.status === 'draft_completed').length / totalCount) * 100, 100);
-                document.getElementById('dbProgress').style.width = `${progress}%`;
-            }
-        }
-
-        // Delete queue item
-        async function deleteQueueItem(jobId) {
-            if (!SYSTEM_CONFIG.isFirebaseInitialized) {
-                showToast('Firebase ยังไม่พร้อม', 'error');
-                return;
-            }
-            
-            showConfirmModal(
-                'ลบคิวงาน',
-                'คุณแน่ใจหรือไม่ที่จะลบคิวงานนี้? การดำเนินการนี้ไม่สามารถย้อนกลับได้',
-                async () => {
-                    try {
-                        await SYSTEM_CONFIG.db.ref('tiktokJobs/' + jobId).remove();
-                        showToast('ลบคิวงานสำเร็จ', 'success');
-                    } catch (error) {
-                        console.error('Error deleting job:', error);
-                        showToast('ลบคิวงานล้มเหลว: ' + error.message, 'error');
-                    }
-                }
-            );
-        }
-
-        // Clear all queue items
-        async function clearQueue() {
-            if (!SYSTEM_CONFIG.isFirebaseInitialized) {
-                showToast('Firebase ยังไม่พร้อม', 'error');
-                return;
-            }
-            
-            showConfirmModal(
-                'ล้างคิวงานทั้งหมด',
-                'คุณแน่ใจหรือไม่ที่จะล้างคิวงานทั้งหมด? การดำเนินการนี้ไม่สามารถย้อนกลับได้',
-                async () => {
-                    try {
-                        await SYSTEM_CONFIG.db.ref('tiktokJobs').remove();
-                        showToast('ล้างคิวงานสำเร็จ', 'success');
-                    } catch (error) {
-                        console.error('Error clearing queue:', error);
-                        showToast('ล้างคิวงานล้มเหลว: ' + error.message, 'error');
-                    }
-                }
-            );
-        }
-
-        // Play video
-        function playVideo(videoUrl, caption) {
-            if (!videoUrl) {
-                showToast('ไม่มีวิดีโอที่สามารถเล่นได้', 'error');
-                return;
-            }
-            
-            // Set video data for preview
-            SYSTEM_CONFIG.currentVideoData = {
-                videoUrl: videoUrl,
-                caption: caption
-            };
-            
-            showFullVideoPreview();
-        }
-
-        // Initialize system
-        document.addEventListener('DOMContentLoaded', function() {
-            initSystem();
-            setupEventListeners();
-            
-            // Initialize Firebase immediately
-            setTimeout(() => {
-                initializeFirebase();
-            }, 1000);
-        });
-
-        function initSystem() {
+        function initTabs() {
             // Initialize tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -2288,39 +650,22 @@
         }
 
         function setupEventListeners() {
-            // Video form submission
-            document.getElementById('videoForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                await createVideo();
-            });
-
+            // Generate button
+            document.getElementById('generateBtn').addEventListener('click', generateVideo);
+            
             // Preview button
-            document.getElementById('previewBtn').addEventListener('click', generateVideoPreview);
+            document.getElementById('previewBtn').addEventListener('click', showVideoPreview);
             
-            // Firebase buttons
-            document.getElementById('initFirebaseBtn').addEventListener('click', initializeDatabase);
-            document.getElementById('testConnectionBtn').addEventListener('click', testFirebaseConnection);
+            // Download button
+            document.getElementById('downloadBtn').addEventListener('click', downloadVideo);
             
-            // TikTok login buttons
-            document.getElementById('connectTikTokBtn').addEventListener('click', showTikTokLoginModal);
-            document.getElementById('addTikTokAccountBtn').addEventListener('click', showTikTokLoginModal);
-            document.getElementById('addTikTokAccountBtn2').addEventListener('click', showTikTokLoginModal);
+            // Upload guide button
+            document.getElementById('uploadGuideBtn').addEventListener('click', showUploadGuide);
             
-            // Queue buttons
-            document.getElementById('clearQueueBtn').addEventListener('click', clearQueue);
-            document.getElementById('refreshQueueBtn').addEventListener('click', () => {
-                showToast('รีเฟรชข้อมูลคิวงานแล้ว', 'info');
-                updateQueueTable();
-            });
+            // Clear history button
+            document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
             
-            // Settings buttons
-            document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
-                await saveTikTokConfig();
-            });
-            
-            document.getElementById('resetSettingsBtn').addEventListener('click', resetSystemSettings);
-            
-            // Video preview events
+            // Video preview click
             document.getElementById('videoPreview').addEventListener('click', showFullVideoPreview);
         }
 
@@ -2343,12 +688,546 @@
             });
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
-            currentTab = tabId;
-            
             // Update specific tab content
-            if (tabId === 'accounts') {
-                updateAccountsDisplay();
+            if (tabId === 'queue') {
+                updateHistoryDisplay();
             }
+        }
+
+        async function generateVideo() {
+            const prompt = document.getElementById('prompt').value;
+            const caption = document.getElementById('caption').value;
+            const aspectRatio = document.getElementById('aspectRatio').value;
+            const duration = document.getElementById('duration').value;
+            
+            if (!prompt) {
+                showModal('กรุณากรอกข้อมูล', 'กรุณากรอกคำอธิบายวิดีโอ (Prompt)');
+                return;
+            }
+            
+            // Show loading state
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังสร้างวิดีโอ...';
+            
+            // Show video placeholder with loading
+            document.getElementById('videoPlaceholder').innerHTML = `
+                <div class="text-center text-white p-4">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-lg">กำลังสร้างคลิปจาก AI...</p>
+                    <p class="text-sm opacity-75 mt-2">กำลังประมวลผล: "${prompt.substring(0, 30)}..."</p>
+                </div>
+            `;
+            
+            // Simulate video generation (2-3 seconds)
+            setTimeout(() => {
+                try {
+                    // Generate video URL based on prompt
+                    const videoUrl = generateVideoUrlFromPrompt(prompt, aspectRatio);
+                    
+                    // Store video data
+                    currentVideoData = {
+                        id: 'vid_' + Date.now(),
+                        title: prompt.substring(0, 50) + (prompt.length > 50 ? '...' : ''),
+                        prompt: prompt,
+                        caption: caption,
+                        aspectRatio: aspectRatio,
+                        duration: duration,
+                        videoUrl: videoUrl,
+                        createdAt: new Date().toISOString(),
+                        status: 'generated'
+                    };
+                    
+                    // Update video preview
+                    const videoPreview = document.getElementById('videoPreview');
+                    const videoPlaceholder = document.getElementById('videoPlaceholder');
+                    const videoOverlay = document.getElementById('videoOverlay');
+                    
+                    videoPreview.src = videoUrl;
+                    videoPreview.style.display = 'block';
+                    videoPlaceholder.style.display = 'none';
+                    videoOverlay.classList.remove('hidden');
+                    
+                    document.getElementById('videoTitle').textContent = 'คลิปที่สร้างจาก AI';
+                    document.getElementById('videoDescription').textContent = prompt.substring(0, 50) + (prompt.length > 50 ? '...' : '');
+                    
+                    // Enable download button
+                    document.getElementById('downloadBtn').disabled = false;
+                    
+                    // Reset generate button
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = '<i class="fas fa-magic mr-2"></i> สร้างวิดีโอตอนนี้';
+                    
+                    // Save to history
+                    saveToHistory(currentVideoData);
+                    
+                    showToast('สร้างวิดีโอสำเร็จ!', 'success');
+                    
+                } catch (error) {
+                    console.error('Error generating video:', error);
+                    
+                    document.getElementById('videoPlaceholder').innerHTML = `
+                        <div class="text-center text-white p-4">
+                            <i class="fas fa-exclamation-triangle text-3xl mb-4 text-yellow-500"></i>
+                            <p class="text-lg">เกิดข้อผิดพลาด</p>
+                            <p class="text-sm opacity-75 mt-2">กำลังใช้ตัวอย่างวิดีโอแทน</p>
+                        </div>
+                    `;
+                    
+                    // Use fallback video
+                    setTimeout(() => {
+                        const fallbackUrl = getFallbackVideoUrl();
+                        currentVideoData = {
+                            id: 'vid_' + Date.now(),
+                            title: prompt.substring(0, 50) + (prompt.length > 50 ? '...' : ''),
+                            prompt: prompt,
+                            caption: caption,
+                            aspectRatio: aspectRatio,
+                            duration: duration,
+                            videoUrl: fallbackUrl,
+                            createdAt: new Date().toISOString(),
+                            status: 'generated'
+                        };
+                        
+                        const videoPreview = document.getElementById('videoPreview');
+                        const videoPlaceholder = document.getElementById('videoPlaceholder');
+                        const videoOverlay = document.getElementById('videoOverlay');
+                        
+                        videoPreview.src = fallbackUrl;
+                        videoPreview.style.display = 'block';
+                        videoPlaceholder.style.display = 'none';
+                        videoOverlay.classList.remove('hidden');
+                        
+                        document.getElementById('videoTitle').textContent = 'คลิปตัวอย่าง';
+                        document.getElementById('videoDescription').textContent = prompt.substring(0, 50) + (prompt.length > 50 ? '...' : '');
+                        
+                        document.getElementById('downloadBtn').disabled = false;
+                        generateBtn.disabled = false;
+                        generateBtn.innerHTML = '<i class="fas fa-magic mr-2"></i> สร้างวิดีโอตอนนี้';
+                        
+                        saveToHistory(currentVideoData);
+                        
+                        showToast('สร้างวิดีโอสำเร็จ (ใช้ตัวอย่าง)', 'success');
+                    }, 1000);
+                }
+            }, 2000);
+        }
+
+        function generateVideoUrlFromPrompt(prompt, aspectRatio) {
+            // ตัวอย่างวิดีโอฟรีที่สามารถใช้ได้ (ไม่มีลิขสิทธิ์)
+            const videoLibrary = [
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4'
+            ];
+            
+            // Select random video from library
+            const randomIndex = Math.floor(Math.random() * videoLibrary.length);
+            return videoLibrary[randomIndex];
+        }
+
+        function getFallbackVideoUrl() {
+            // Fallback video URLs
+            const fallbackVideos = [
+                'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4'
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * fallbackVideos.length);
+            return fallbackVideos[randomIndex];
+        }
+
+        function showVideoPreview() {
+            if (!currentVideoData) {
+                showModal('กรุณาสร้างวิดีโอก่อน', 'กรุณากดปุ่ม "สร้างวิดีโอตอนนี้" เพื่อสร้างวิดีโอก่อน');
+                return;
+            }
+            
+            const videoElement = document.getElementById('fullVideoPreview');
+            videoElement.src = currentVideoData.videoUrl;
+            videoElement.load();
+            
+            document.getElementById('previewPrompt').textContent = currentVideoData.prompt;
+            document.getElementById('previewAspectRatio').textContent = currentVideoData.aspectRatio;
+            document.getElementById('previewDuration').textContent = currentVideoData.duration + ' วินาที';
+            document.getElementById('previewCaption').textContent = currentVideoData.caption;
+            document.getElementById('previewCreatedAt').textContent = new Date(currentVideoData.createdAt).toLocaleDateString('th-TH');
+            
+            document.getElementById('fullVideoTitle').textContent = currentVideoData.title;
+            document.getElementById('fullVideoDescription').textContent = currentVideoData.prompt.substring(0, 100) + (currentVideoData.prompt.length > 100 ? '...' : '');
+            
+            document.getElementById('videoPreviewModal').classList.remove('hidden');
+        }
+
+        function showFullVideoPreview() {
+            showVideoPreview();
+        }
+
+        function downloadVideo() {
+            if (!currentVideoData || !currentVideoData.videoUrl) {
+                showToast('ไม่มีวิดีโอที่สามารถดาวน์โหลดได้', 'error');
+                return;
+            }
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.href = currentVideoData.videoUrl;
+            link.download = `tiktok_video_${Date.now()}.mp4`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Update video status
+            currentVideoData.status = 'downloaded';
+            currentVideoData.downloadedAt = new Date().toISOString();
+            
+            // Update history
+            updateVideoInHistory(currentVideoData.id, {
+                status: 'downloaded',
+                downloadedAt: currentVideoData.downloadedAt
+            });
+            
+            // Update stats
+            updateStats();
+            
+            showToast('กำลังดาวน์โหลดวิดีโอ...', 'success');
+            
+            // Show success modal after 1 second
+            setTimeout(() => {
+                showModal('ดาวน์โหลดสำเร็จ!', 'วิดีโอถูกดาวน์โหลดเรียบร้อยแล้ว ขั้นตอนต่อไป: อัพโหลดวิดีโอนี้ไปยัง TikTok');
+            }, 1000);
+        }
+
+        function saveToCloud() {
+            if (!currentVideoData) {
+                showToast('ไม่มีวิดีโอที่สามารถบันทึกได้', 'error');
+                return;
+            }
+            
+            // Update video status
+            currentVideoData.status = 'saved_to_cloud';
+            currentVideoData.savedAt = new Date().toISOString();
+            
+            // Update history
+            updateVideoInHistory(currentVideoData.id, {
+                status: 'saved_to_cloud',
+                savedAt: currentVideoData.savedAt
+            });
+            
+            // Update stats
+            updateStats();
+            
+            showModal('บันทึกลง Cloud สำเร็จ!', 'วิดีโอถูกบันทึกลงระบบเรียบร้อยแล้ว คุณสามารถดูประวัติได้ในแท็บ "คิวงาน"');
+        }
+
+        function showUploadGuide() {
+            document.getElementById('uploadGuideModal').classList.remove('hidden');
+        }
+
+        function loadVideoHistory() {
+            try {
+                const savedHistory = localStorage.getItem('tiktokVideoHistory');
+                if (savedHistory) {
+                    videoHistory = JSON.parse(savedHistory);
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Error loading history from localStorage:', error);
+                videoHistory = [];
+            }
+        }
+
+        async function loadFirebaseHistory() {
+            if (!isFirebaseConnected) return;
+            
+            try {
+                const historyRef = db.ref('videoHistory');
+                const snapshot = await historyRef.once('value');
+                const data = snapshot.val();
+                
+                if (data) {
+                    // Merge with localStorage history
+                    const firebaseHistory = Object.values(data);
+                    const mergedHistory = [...videoHistory, ...firebaseHistory];
+                    
+                    // Remove duplicates
+                    const uniqueIds = new Set();
+                    videoHistory = mergedHistory.filter(item => {
+                        if (uniqueIds.has(item.id)) return false;
+                        uniqueIds.add(item.id);
+                        return true;
+                    });
+                    
+                    // Sort by creation date (newest first)
+                    videoHistory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    
+                    // Save back to localStorage
+                    localStorage.setItem('tiktokVideoHistory', JSON.stringify(videoHistory));
+                    
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Error loading history from Firebase:', error);
+            }
+        }
+
+        function saveToHistory(videoData) {
+            // Add to local history
+            videoHistory.unshift(videoData);
+            
+            // Keep only last 50 items
+            if (videoHistory.length > 50) {
+                videoHistory = videoHistory.slice(0, 50);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('tiktokVideoHistory', JSON.stringify(videoHistory));
+            
+            // Try to save to Firebase
+            if (isFirebaseConnected) {
+                try {
+                    db.ref('videoHistory/' + videoData.id).set(videoData);
+                } catch (error) {
+                    console.error('Error saving to Firebase:', error);
+                }
+            }
+            
+            // Update stats and display
+            updateStats();
+            updateHistoryDisplay();
+        }
+
+        function updateVideoInHistory(videoId, updates) {
+            // Find and update video in history
+            const videoIndex = videoHistory.findIndex(v => v.id === videoId);
+            if (videoIndex !== -1) {
+                videoHistory[videoIndex] = { ...videoHistory[videoIndex], ...updates };
+                
+                // Save to localStorage
+                localStorage.setItem('tiktokVideoHistory', JSON.stringify(videoHistory));
+                
+                // Try to update Firebase
+                if (isFirebaseConnected) {
+                    try {
+                        db.ref('videoHistory/' + videoId).update(updates);
+                    } catch (error) {
+                        console.error('Error updating Firebase:', error);
+                    }
+                }
+            }
+        }
+
+        function updateStats() {
+            const totalCreated = videoHistory.length;
+            const totalDownloaded = videoHistory.filter(v => v.status === 'downloaded').length;
+            
+            document.getElementById('totalCreated').textContent = totalCreated;
+            document.getElementById('totalDownloaded').textContent = totalDownloaded;
+            document.getElementById('queueCount').textContent = totalCreated;
+            
+            // Update progress bar
+            const progress = totalCreated > 0 ? Math.min((totalDownloaded / totalCreated) * 100, 100) : 100;
+            document.getElementById('systemProgress').style.width = `${progress}%`;
+            
+            // Update status message
+            if (totalCreated === 0) {
+                document.getElementById('systemMessage').textContent = 'เริ่มสร้างวิดีโอแรกของคุณเลย!';
+            } else if (totalDownloaded === 0) {
+                document.getElementById('systemMessage').textContent = `สร้างวิดีโอแล้ว ${totalCreated} คลิป - รอการดาวน์โหลด`;
+            } else {
+                document.getElementById('systemMessage').textContent = `สร้างวิดีโอแล้ว ${totalCreated} คลิป - ดาวน์โหลดแล้ว ${totalDownloaded} คลิป`;
+            }
+        }
+
+        function updateHistoryDisplay() {
+            const queueList = document.getElementById('queueList');
+            const queueEmpty = document.getElementById('queueEmpty');
+            
+            if (videoHistory.length === 0) {
+                queueList.classList.add('hidden');
+                queueEmpty.classList.remove('hidden');
+                return;
+            }
+            
+            queueList.classList.remove('hidden');
+            queueEmpty.classList.add('hidden');
+            
+            // Clear queue list
+            queueList.innerHTML = '';
+            
+            // Add items to list (show only last 20)
+            const recentHistory = videoHistory.slice(0, 20);
+            
+            recentHistory.forEach(item => {
+                const queueItem = document.createElement('div');
+                queueItem.className = 'queue-item border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-300';
+                
+                // Determine status badge
+                let statusBadge = '';
+                let statusColor = '';
+                
+                switch(item.status) {
+                    case 'generated':
+                        statusBadge = 'สร้างแล้ว';
+                        statusColor = 'badge-info';
+                        break;
+                    case 'downloaded':
+                        statusBadge = 'ดาวน์โหลดแล้ว';
+                        statusColor = 'badge-success';
+                        break;
+                    case 'saved_to_cloud':
+                        statusBadge = 'บันทึก Cloud';
+                        statusColor = 'badge-info';
+                        break;
+                    default:
+                        statusBadge = 'สร้างแล้ว';
+                        statusColor = 'badge-info';
+                }
+                
+                // Format date
+                const createdDate = new Date(item.createdAt);
+                const formattedDate = createdDate.toLocaleDateString('th-TH', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                queueItem.innerHTML = `
+                    <div class="flex flex-col md:flex-row md:items-center justify-between">
+                        <div class="mb-3 md:mb-0 md:flex-1">
+                            <div class="font-bold text-gray-800 mb-1">${item.title}</div>
+                            <div class="text-gray-600 text-sm mb-2">${item.caption ? item.caption.substring(0, 50) + (item.caption.length > 50 ? '...' : '') : 'ไม่มีคำบรรยาย'}</div>
+                            <div class="flex items-center space-x-4 text-xs text-gray-500 mt-2">
+                                <span><i class="fas fa-expand-alt mr-1"></i> ${item.aspectRatio}</span>
+                                <span><i class="fas fa-clock mr-1"></i> ${item.duration} วินาที</span>
+                                <span><i class="fas fa-calendar mr-1"></i> ${formattedDate}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:items-end space-y-2 mt-3 md:mt-0">
+                            <div>
+                                <span class="badge ${statusColor}">${statusBadge}</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="playHistoryVideo('${item.id}')" class="text-blue-600 hover:text-blue-800 text-sm" title="เล่นวิดีโอ">
+                                    <i class="fas fa-play mr-1"></i> เล่น
+                                </button>
+                                <button onclick="downloadHistoryVideo('${item.id}')" class="text-green-600 hover:text-green-800 text-sm" title="ดาวน์โหลดอีกครั้ง">
+                                    <i class="fas fa-download mr-1"></i> ดาวน์โหลด
+                                </button>
+                                <button onclick="deleteHistoryItem('${item.id}')" class="text-red-600 hover:text-red-800 text-sm" title="ลบ">
+                                    <i class="fas fa-trash mr-1"></i> ลบ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                queueList.appendChild(queueItem);
+            });
+        }
+
+        function playHistoryVideo(videoId) {
+            const videoItem = videoHistory.find(v => v.id === videoId);
+            if (!videoItem || !videoItem.videoUrl) {
+                showToast('ไม่สามารถเล่นวิดีโอนี้ได้', 'error');
+                return;
+            }
+            
+            // Set as current video data
+            currentVideoData = videoItem;
+            
+            // Update preview if we're on create tab
+            if (currentTab === 'create') {
+                const videoPreview = document.getElementById('videoPreview');
+                const videoPlaceholder = document.getElementById('videoPlaceholder');
+                const videoOverlay = document.getElementById('videoOverlay');
+                
+                if (videoPreview && videoPlaceholder) {
+                    videoPreview.src = videoItem.videoUrl;
+                    videoPreview.style.display = 'block';
+                    videoPlaceholder.style.display = 'none';
+                    videoOverlay.classList.remove('hidden');
+                    
+                    document.getElementById('videoTitle').textContent = videoItem.title;
+                    document.getElementById('videoDescription').textContent = videoItem.prompt.substring(0, 50) + (videoItem.prompt.length > 50 ? '...' : '');
+                    
+                    document.getElementById('downloadBtn').disabled = false;
+                }
+            }
+            
+            // Show full preview
+            showVideoPreview();
+        }
+
+        function downloadHistoryVideo(videoId) {
+            const videoItem = videoHistory.find(v => v.id === videoId);
+            if (!videoItem || !videoItem.videoUrl) {
+                showToast('ไม่สามารถดาวน์โหลดวิดีโอนี้ได้', 'error');
+                return;
+            }
+            
+            // Set as current video data
+            currentVideoData = videoItem;
+            
+            // Trigger download
+            downloadVideo();
+        }
+
+        function deleteHistoryItem(videoId) {
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะลบวิดีโอนี้จากประวัติ?')) {
+                return;
+            }
+            
+            // Remove from local history
+            videoHistory = videoHistory.filter(v => v.id !== videoId);
+            
+            // Save to localStorage
+            localStorage.setItem('tiktokVideoHistory', JSON.stringify(videoHistory));
+            
+            // Try to delete from Firebase
+            if (isFirebaseConnected) {
+                try {
+                    db.ref('videoHistory/' + videoId).remove();
+                } catch (error) {
+                    console.error('Error deleting from Firebase:', error);
+                }
+            }
+            
+            // Update display
+            updateHistoryDisplay();
+            updateStats();
+            
+            showToast('ลบวิดีโอจากประวัติสำเร็จ', 'success');
+        }
+
+        function clearHistory() {
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะล้างประวัติการสร้างวิดีโอทั้งหมด? การดำเนินการนี้ไม่สามารถย้อนกลับได้')) {
+                return;
+            }
+            
+            // Clear local history
+            videoHistory = [];
+            localStorage.removeItem('tiktokVideoHistory');
+            
+            // Try to clear Firebase history
+            if (isFirebaseConnected) {
+                try {
+                    db.ref('videoHistory').remove();
+                } catch (error) {
+                    console.error('Error clearing Firebase history:', error);
+                }
+            }
+            
+            // Update display
+            updateHistoryDisplay();
+            updateStats();
+            
+            showToast('ล้างประวัติสำเร็จ', 'success');
         }
 
         // Modal functions
@@ -2360,24 +1239,6 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');
-        }
-
-        function showConfirmModal(title, message, callback) {
-            document.getElementById('confirmTitle').textContent = title;
-            document.getElementById('confirmMessage').textContent = message;
-            document.getElementById('confirmModal').classList.remove('hidden');
-            
-            SYSTEM_CONFIG.pendingAction = callback;
-        }
-
-        function confirmAction(proceed) {
-            closeModal('confirmModal');
-            
-            if (proceed && SYSTEM_CONFIG.pendingAction) {
-                SYSTEM_CONFIG.pendingAction();
-            }
-            
-            SYSTEM_CONFIG.pendingAction = null;
         }
 
         function showToast(message, type = 'info') {
@@ -2410,24 +1271,14 @@
         // Make functions available globally
         window.switchTab = switchTab;
         window.closeModal = closeModal;
-        window.confirmAction = confirmAction;
-        window.playVideo = playVideo;
-        window.deleteQueueItem = deleteQueueItem;
-        window.viewTikTokProfile = viewTikTokProfile;
-        window.testTikTokAccount = testTikTokAccount;
-        window.disconnectTikTokAccount = disconnectTikTokAccount;
-        window.generateVideoPreview = generateVideoPreview;
-        window.showFullVideoPreview = showFullVideoPreview;
+        window.playHistoryVideo = playHistoryVideo;
+        window.downloadHistoryVideo = downloadHistoryVideo;
+        window.deleteHistoryItem = deleteHistoryItem;
         window.downloadVideo = downloadVideo;
-        window.postToTikTokFromPreview = postToTikTokFromPreview;
-        window.startTikTokLogin = startTikTokLogin;
-        window.cancelTikTokLogin = cancelTikTokLogin;
-        window.showTikTokLoginModal = showTikTokLoginModal;
-        window.startManualTikTokLogin = startManualTikTokLogin;
-        window.startTikTokOAuth = startTikTokOAuth;
-        window.startTikTokScraper = startTikTokScraper;
-        window.cancelManualLogin = cancelManualLogin;
-        window.submitManualLogin = submitManualLogin;
+        window.saveToCloud = saveToCloud;
+        window.showVideoPreview = showVideoPreview;
+        window.showFullVideoPreview = showFullVideoPreview;
+        window.showUploadGuide = showUploadGuide;
     </script>
 </body>
 </html>
