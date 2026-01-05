@@ -1,205 +1,1018 @@
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const app = express();
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Automation System | ระบบสร้างและโพสต์คลิปอัตโนมัติ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .tiktok-gradient { background: linear-gradient(135deg, #69C9D0 0%, #EE1D52 100%); }
+        .video-preview { aspect-ratio: 9/16; background: #000; border-radius: 12px; overflow: hidden; }
+        .loading-spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-active { border-bottom: 3px solid #667eea; color: #667eea; font-weight: bold; }
+        .queue-item { transition: all 0.3s ease; }
+        .queue-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .badge { font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 9999px; }
+        .badge-success { background-color: #10b981; color: white; }
+        .badge-warning { background-color: #f59e0b; color: white; }
+        .badge-error { background-color: #ef4444; color: white; }
+        .badge-info { background-color: #3b82f6; color: white; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <header class="gradient-bg text-white py-6 shadow-lg">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <i class="fab fa-tiktok text-3xl mr-3"></i>
+                        <div>
+                            <h1 class="text-2xl font-bold">TikTok Automation System</h1>
+                            <p class="text-sm opacity-80 mt-1">ระบบสร้างและโพสต์คลิป TikTok อัตโนมัติ</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <div class="font-bold" id="accountStatus">พร้อมใช้งาน</div>
+                            <div class="text-xs opacity-80" id="accountInfo">0/5 คลิปวันนี้</div>
+                        </div>
+                        <div class="bg-white text-purple-700 font-bold py-1 px-3 rounded-full text-sm">
+                            <i class="fas fa-robot mr-1"></i> AUTO
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex space-x-8 overflow-x-auto">
+                    <button class="tab-btn py-2 px-1 text-white font-medium border-b-2 border-transparent hover:border-white transition" data-tab="create">
+                        <i class="fas fa-plus-circle mr-2"></i>สร้างคลิปใหม่
+                    </button>
+                    <button class="tab-btn py-2 px-1 text-white font-medium border-b-2 border-transparent hover:border-white transition" data-tab="queue">
+                        <i class="fas fa-list-ol mr-2"></i>คิวงาน (<span id="queueCount">0</span>)
+                    </button>
+                    <button class="tab-btn py-2 px-1 text-white font-medium border-b-2 border-transparent hover:border-white transition" data-tab="accounts">
+                        <i class="fas fa-users mr-2"></i>บัญชี TikTok
+                    </button>
+                    <button class="tab-btn py-2 px-1 text-white font-medium border-b-2 border-transparent hover:border-white transition" data-tab="settings">
+                        <i class="fas fa-cog mr-2"></i>ตั้งค่าระบบ
+                    </button>
+                </div>
+            </div>
+        </header>
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
+        <main class="container mx-auto px-4 py-8">
+            <!-- Tab Content: Create Video -->
+            <div id="tab-create" class="tab-content fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                                <i class="fas fa-video mr-2 text-purple-600"></i> สร้างคลิปวิดีโอใหม่
+                            </h2>
+                            
+                            <form id="videoForm">
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="prompt">
+                                        <i class="fas fa-comment-dots mr-1"></i> คำอธิบายวิดีโอ (Prompt)
+                                    </label>
+                                    <textarea class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
+                                              id="prompt" 
+                                              rows="4"
+                                              placeholder="ตัวอย่าง: A professor stands at the front of a lively classroom..."
+                                              required>สาวน้อยวัย 20 ปี ยิ้มแย้มยืนอยู่หน้าห้างสรรพสินค้าที่สว่างไสว เธอถือถุงช้อปปิ้งสีฟ้าและโบกมือให้กับคนที่เดินผ่านไปมา เธอพูดด้วยความสุข: "วันนี้ช้อปปิ้งสนุกมากเลย ได้ของดีราคาถูกด้วย!" ฉากหลังเต็มไปด้วยผู้คนที่กำลังช้อปปิ้งและรอยยิ้ม</textarea>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="aspectRatio">
+                                            <i class="fas fa-expand-alt mr-1"></i> สัดส่วนวิดีโอ
+                                        </label>
+                                        <select class="shadow border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
+                                                id="aspectRatio">
+                                            <option value="landscape">แนวนอน (16:9)</option>
+                                            <option value="portrait" selected>แนวตั้ง (9:16)</option>
+                                            <option value="square">สี่เหลี่ยมจัตุรัส (1:1)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="frames">
+                                            <i class="fas fa-film mr-1"></i> จำนวนเฟรม
+                                        </label>
+                                        <input class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
+                                               id="frames" 
+                                               type="number" 
+                                               min="1" 
+                                               max="30" 
+                                               value="10">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="caption">
+                                        <i class="fas fa-pencil-alt mr-1"></i> Caption สำหรับ TikTok
+                                    </label>
+                                    <textarea class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
+                                              id="caption" 
+                                              rows="3"
+                                              placeholder="เขียนคำบรรยายที่น่าสนใจสำหรับคลิปของคุณ..."
+                                              required>🛍️ ช้อปปิ้งวันนี้สนุกมาก! ได้ของดีราคาถูกเยอะแยะเลย 💖 ใครชอบช้อปปิ้งเหมือนกันบ้าง? #ช้อปปิ้ง #ของดีราคาถูก #สาวช้อป #ชีวิตดี๊ดี #เทรนด์วัยรุ่น #ชีวิตชีวา #shopping #fashion #lifestyle</textarea>
+                                </div>
+                                
+                                <div class="flex space-x-4 mb-8">
+                                    <div class="flex items-center">
+                                        <input class="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded" 
+                                               id="autoPost" 
+                                               type="radio" 
+                                               name="postOption" 
+                                               value="auto" 
+                                               checked>
+                                        <label class="ml-2 block text-gray-700 font-medium" for="autoPost">
+                                            <span class="font-bold">ให้ระบบโพสต์อัตโนมัติ</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <input class="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded" 
+                                               id="draftOnly" 
+                                               type="radio" 
+                                               name="postOption" 
+                                               value="draft">
+                                        <label class="ml-2 block text-gray-700 font-medium" for="draftOnly">
+                                            <span class="font-bold">บันทึกเป็นแบบร่างเท่านั้น</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-center">
+                                    <button type="submit" id="generateBtn" class="gradient-bg hover:opacity-90 text-white font-bold py-3 px-8 rounded-full text-lg flex items-center transition duration-300">
+                                        <i class="fas fa-magic mr-2"></i> สร้างและเพิ่มลงคิว
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                                <i class="fas fa-play-circle mr-2 text-purple-600"></i> ตัวอย่างวิดีโอ
+                            </h2>
+                            
+                            <div id="videoPreviewContainer" class="video-preview flex items-center justify-center mb-4">
+                                <div id="videoPlaceholder" class="text-center text-white p-4">
+                                    <i class="fas fa-video text-5xl mb-4 opacity-50"></i>
+                                    <p class="text-lg">ตัวอย่างวิดีโอ</p>
+                                    <p class="text-sm opacity-75 mt-2">ขนาด: 9:16 (แนวตั้ง)</p>
+                                </div>
+                                
+                                <div id="videoLoading" class="hidden text-center text-white p-4">
+                                    <div class="loading-spinner mx-auto mb-4"></div>
+                                    <p class="text-lg">กำลังสร้างวิดีโอ...</p>
+                                    <p class="text-sm opacity-75 mt-2">กรุณารอสักครู่...</p>
+                                </div>
+                                
+                                <div id="videoResult" class="hidden w-full h-full relative">
+                                    <video id="generatedVideo" class="w-full h-full object-cover" controls></video>
+                                    <div class="absolute bottom-16 left-4 right-4 bg-gradient-to-t from-black to-transparent p-4">
+                                        <div class="text-white font-bold" id="captionOverlay">🛍️ ช้อปปิ้งวันนี้สนุกมาก!</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="videoDetails" class="hidden bg-gray-50 p-4 rounded-lg mb-6 fade-in">
+                                <h3 class="font-bold text-gray-800 mb-2">รายละเอียดวิดีโอ:</h3>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="text-gray-600">สถานะ:</div>
+                                    <div class="font-medium text-green-600"><i class="fas fa-check-circle mr-1"></i> สร้างเสร็จแล้ว</div>
+                                    <div class="text-gray-600">รหัสงาน:</div>
+                                    <div class="font-medium" id="jobId">-</div>
+                                    <div class="text-gray-600">สร้างเมื่อ:</div>
+                                    <div class="font-medium" id="createdAt">-</div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <button id="downloadBtn" class="hidden w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                                    <i class="fas fa-download mr-2"></i> ดาวน์โหลดวิดีโอ
+                                </button>
+                                
+                                <div id="postOptions" class="hidden space-y-4 fade-in">
+                                    <div class="border-t pt-4">
+                                        <h3 class="font-bold text-gray-800 mb-3 text-center">ตัวเลือกการโพสต์</h3>
+                                        
+                                        <div class="flex flex-col sm:flex-row gap-4">
+                                            <button id="postSelfBtn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                                                <i class="fas fa-user mr-2"></i> โพสต์ด้วยตนเอง
+                                            </button>
+                                            
+                                            <button id="postAutoBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                                                <i class="fas fa-robot mr-2"></i> ให้ระบบโพสต์ให้
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                                <i class="fas fa-tasks mr-2 text-purple-600"></i> สถานะคิวงาน
+                            </h2>
+                            
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">กำลังดำเนินการ:</span>
+                                    <span class="font-bold text-blue-600" id="processingCount">0</span>
+                                </div>
+                                
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">รอโพสต์:</span>
+                                    <span class="font-bold text-yellow-600" id="pendingCount">0</span>
+                                </div>
+                                
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">สำเร็จแล้ว:</span>
+                                    <span class="font-bold text-green-600" id="completedCount">0</span>
+                                </div>
+                                
+                                <div class="pt-4 border-t">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-gray-700">โควต้าการใช้งาน:</span>
+                                        <span class="font-bold" id="quotaCount">0/10</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div id="quotaProgress" class="bg-green-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab Content: Queue -->
+            <div id="tab-queue" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-list-ol mr-2 text-purple-600"></i> คิวงานวิดีโอ
+                        </h2>
+                        <button id="refreshQueueBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg flex items-center transition duration-300">
+                            <i class="fas fa-sync-alt mr-2"></i> รีเฟรช
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วิดีโอ</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เวลาโพสต์</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สร้างเมื่อ</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="queueTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- Queue items will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="queueEmpty" class="hidden text-center py-12">
+                        <i class="fas fa-inbox text-gray-300 text-5xl mb-4"></i>
+                        <h3 class="text-xl font-medium text-gray-700 mb-2">ไม่มีงานในคิว</h3>
+                        <p class="text-gray-500 mb-6">เริ่มต้นด้วยการสร้างคลิปวิดีโอใหม่</p>
+                        <button class="gradient-bg hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition duration-300" onclick="switchTab('create')">
+                            <i class="fas fa-plus mr-2"></i> สร้างคลิปใหม่
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab Content: TikTok Accounts -->
+            <div id="tab-accounts" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                            <i class="fab fa-tiktok mr-2 text-purple-600"></i> บัญชี TikTok
+                        </h2>
+                        <button id="connectAccountBtn" class="tiktok-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg flex items-center transition duration-300">
+                            <i class="fas fa-plus mr-2"></i> เชื่อมต่อบัญชีใหม่
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" id="accountsGrid">
+                        <!-- Account cards will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab Content: Settings -->
+            <div id="tab-settings" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-cog mr-2 text-purple-600"></i> ตั้งค่าระบบ
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">ตั้งค่า Backend Server</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="backendUrl">
+                                        Backend Server URL
+                                    </label>
+                                    <input class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" 
+                                           id="backendUrl" 
+                                           type="url" 
+                                           value="http://localhost:3000"
+                                           placeholder="http://localhost:3000">
+                                    <p class="text-gray-500 text-xs mt-1">URL ของเซิร์ฟเวอร์แบ็กเอนด์ของคุณ</p>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <input class="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded" 
+                                           id="enableMock" 
+                                           type="checkbox" 
+                                           checked>
+                                    <label class="ml-2 block text-gray-700 font-medium" for="enableMock">
+                                        ใช้ระบบจำลอง (เมื่อยังไม่มีเซิร์ฟเวอร์)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t">
+                            <button id="saveSettingsBtn" class="gradient-bg hover:opacity-90 text-white font-bold py-3 px-8 rounded-lg flex items-center transition duration-300">
+                                <i class="fas fa-save mr-2"></i> บันทึกการตั้งค่า
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
 
-// เก็บ API Keys อย่างปลอดภัย (ใน production ให้ใช้ environment variables)
-const API_KEYS = {
-    KIE_AI: '10757e71946cb1a904cf4c2632f221ce',
-    TIKTOK: {
-        client_key: 'aw9lzl4sxsdquuz3',
-        client_secret: '12AqMQRwv66IRPS8lYuP5tgWoLczU3la'
-    }
-};
-
-// 1. สร้างวิดีโอด้วย Kie.ai API
-app.post('/api/create-video', async (req, res) => {
-    try {
-        const { prompt, caption, aspect_ratio, frames, post_option } = req.body;
-        
-        const kieResponse = await axios.post('https://api.kie.ai/api/v1/jobs/createTask', {
-            model: 'sora-2-text-to-video',
-            input: {
-                prompt: prompt,
-                aspect_ratio: aspect_ratio,
-                n_frames: frames,
-                remove_watermark: true
-            }
-        }, {
-            headers: {
-                'Authorization': `Bearer ${API_KEYS.KIE_AI}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const jobId = kieResponse.data.job_id;
-        
-        res.json({
-            success: true,
-            jobId: jobId,
-            message: 'สร้างวิดีโอสำเร็จ',
-            data: {
-                caption: caption,
-                post_option: post_option,
-                created_at: new Date().toISOString()
-            }
-        });
-    } catch (error) {
-        console.error('Error creating video:', error);
-        res.status(500).json({
-            success: false,
-            message: 'สร้างวิดีโอล้มเหลว: ' + error.message
-        });
-    }
-});
-
-// 2. ตรวจสอบสถานะวิดีโอ
-app.get('/api/job-status/:jobId', async (req, res) => {
-    try {
-        const { jobId } = req.params;
-        
-        const statusResponse = await axios.get(`https://api.kie.ai/api/v1/jobs/${jobId}`, {
-            headers: {
-                'Authorization': `Bearer ${API_KEYS.KIE_AI}`
-            }
-        });
-        
-        res.json({
-            success: true,
-            status: statusResponse.data.status,
-            video_url: statusResponse.data.output?.video_url || null,
-            progress: statusResponse.data.progress || 0
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'ตรวจสอบสถานะล้มเหลว'
-        });
-    }
-});
-
-// 3. TikTok OAuth - ขอ Authorization Code
-app.get('/api/tiktok/auth', (req, res) => {
-    const authUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${API_KEYS.TIKTOK.client_key}&response_type=code&scope=user.info.basic,video.upload&redirect_uri=${encodeURIComponent('http://localhost:3000/api/tiktok/callback')}`;
-    res.json({ auth_url: authUrl });
-});
-
-// 4. TikTok OAuth - รับ Callback
-app.get('/api/tiktok/callback', async (req, res) => {
-    const { code } = req.query;
+        <footer class="bg-gray-800 text-white py-8 mt-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fab fa-tiktok mr-2"></i> TikTok Automation System
+                        </h3>
+                        <p class="text-gray-400 mt-2">ระบบสร้างและโพสต์คลิป TikTok อัตโนมัติด้วย AI</p>
+                    </div>
+                    <div class="text-gray-400 text-sm">
+                        <p>API Keys จัดการจากฝั่งหลังบ้านอย่างปลอดภัย</p>
+                        <p class="mt-1">© 2023 TikTok Automation System. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
     
-    try {
-        const tokenResponse = await axios.post('https://open.tiktokapis.com/v2/oauth/token/', {
-            client_key: API_KEYS.TIKTOK.client_key,
-            client_secret: API_KEYS.TIKTOK.client_secret,
-            code: code,
-            grant_type: 'authorization_code',
-            redirect_uri: 'http://localhost:3000/api/tiktok/callback'
-        });
-        
-        const accessToken = tokenResponse.data.access_token;
-        
-        // บันทึก access token ลง database (ในตัวอย่างเก็บใน memory)
-        res.send(`
-            <html>
-                <body>
-                    <h2>เชื่อมต่อบัญชี TikTok สำเร็จ!</h2>
-                    <p>Access Token: ${accessToken.substring(0, 20)}...</p>
-                    <p>ปิดหน้านี้และกลับไปที่ระบบ</p>
-                    <script>
-                        window.opener.postMessage({ type: 'TIKTOK_CONNECTED', access_token: '${accessToken}' }, '*');
-                        setTimeout(() => window.close(), 3000);
-                    </script>
-                </body>
-            </html>
-        `);
-    } catch (error) {
-        res.status(500).send('เชื่อมต่อ TikTok ล้มเหลว');
-    }
-});
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all fade-in">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                    <i class="fas fa-check text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2" id="modalTitle">สำเร็จ!</h3>
+                <p class="text-gray-600 mb-6" id="modalMessage">วิดีโอของคุณถูกสร้างสำเร็จแล้ว</p>
+                <div class="flex justify-center space-x-4">
+                    <button onclick="closeModal('successModal')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
+                        ตกลง
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-// 5. โพสต์วิดีโอไปยัง TikTok
-app.post('/api/tiktok/post', async (req, res) => {
-    try {
-        const { access_token, video_url, caption } = req.body;
-        
-        // ดาวน์โหลดวิดีโอจาก Kie.ai
-        const videoResponse = await axios.get(video_url, { responseType: 'arraybuffer' });
-        const videoBuffer = Buffer.from(videoResponse.data);
-        
-        // อัปโหลดไปยัง TikTok
-        const uploadResponse = await axios.post('https://open.tiktokapis.com/v2/post/publish/inbox/video/init/', 
-            videoBuffer,
-            {
-                headers: {
-                    'Authorization': `Bearer ${access_token}`,
-                    'Content-Type': 'video/mp4'
+    <!-- Connect Account Modal -->
+    <div id="connectAccountModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">เชื่อมต่อบัญชี TikTok</h3>
+                <button class="text-gray-500 hover:text-gray-700 text-2xl" onclick="closeModal('connectAccountModal')">&times;</button>
+            </div>
+            
+            <div class="space-y-6">
+                <div id="oauthConnect" class="border border-gray-300 rounded-lg p-4">
+                    <div class="flex items-center mb-3">
+                        <i class="fab fa-tiktok text-2xl mr-3 text-gray-800"></i>
+                        <div>
+                            <h4 class="font-bold text-gray-800">เชื่อมต่อผ่าน TikTok OAuth</h4>
+                            <p class="text-sm text-gray-600">ใช้การยืนยันตัวตนอย่างปลอดภัย</p>
+                        </div>
+                    </div>
+                    
+                    <button onclick="connectTikTokOAuth()" class="w-full tiktok-gradient hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                        <i class="fab fa-tiktok mr-2"></i> ล็อกอินด้วย TikTok
+                    </button>
+                    
+                    <p class="text-xs text-gray-500 mt-3">ระบบจะขอสิทธิ์ในการโพสต์วิดีโอไปยังบัญชี TikTok ของคุณ</p>
+                </div>
+                
+                <div class="pt-4 border-t">
+                    <h4 class="font-bold text-gray-800 mb-3">หรือกรอกข้อมูลด้วยตนเอง</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-gray-700 text-sm mb-1">ชื่อบัญชี</label>
+                            <input type="text" id="accountName" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="@username">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm mb-1">Access Token</label>
+                            <input type="password" id="accessToken" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="••••••••">
+                            <p class="text-xs text-gray-500 mt-1">ใช้ Access Token ที่ได้จากการเชื่อมต่อ OAuth</p>
+                        </div>
+                        <button onclick="addTikTokAccount()" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                            เพิ่มบัญชี
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ระบบหลัก - TikTok Automation System
+        const SYSTEM_CONFIG = {
+            backendUrl: 'http://localhost:3000',
+            useMock: true,
+            queueItems: [],
+            accounts: []
+        };
+
+        // DOM Elements
+        let currentTab = 'create';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initSystem();
+            setupEventListeners();
+            loadFromLocalStorage();
+            updateQueueDisplay();
+        });
+
+        function initSystem() {
+            // Initialize tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // Set initial active tab
+            switchTab('create');
+        }
+
+        function setupEventListeners() {
+            // Video form submission
+            document.getElementById('videoForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await createVideo();
+            });
+
+            // Download button
+            document.getElementById('downloadBtn').addEventListener('click', downloadVideo);
+
+            // Post buttons
+            document.getElementById('postSelfBtn').addEventListener('click', () => {
+                showModal('โพสต์ด้วยตนเอง', 'ระบบจะนำคุณไปยังหน้า Upload ของ TikTok พร้อมกับวิดีโอและ Caption ที่เตรียมไว้');
+            });
+
+            document.getElementById('postAutoBtn').addEventListener('click', async () => {
+                await postToTikTokAuto();
+            });
+
+            // Connect account button
+            document.getElementById('connectAccountBtn').addEventListener('click', () => {
+                document.getElementById('connectAccountModal').classList.remove('hidden');
+            });
+
+            // Refresh queue button
+            document.getElementById('refreshQueueBtn').addEventListener('click', updateQueueDisplay);
+
+            // Save settings button
+            document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+        }
+
+        function switchTab(tabId) {
+            // Update active tab button
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('border-transparent');
+            });
+            
+            const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('tab-active');
+                activeBtn.classList.remove('border-transparent');
+            }
+
+            // Show selected tab content
+            document.querySelectorAll('.tab-content').forEach(tc => {
+                tc.classList.add('hidden');
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            currentTab = tabId;
+
+            // Load data for specific tabs
+            if (tabId === 'queue') {
+                updateQueueTable();
+            } else if (tabId === 'accounts') {
+                loadAccounts();
+            }
+        }
+
+        async function createVideo() {
+            const prompt = document.getElementById('prompt').value;
+            const caption = document.getElementById('caption').value;
+            const aspectRatio = document.getElementById('aspectRatio').value;
+            const frames = document.getElementById('frames').value;
+            const postOption = document.querySelector('input[name="postOption"]:checked').value;
+
+            // Show loading state
+            document.getElementById('videoPlaceholder').classList.add('hidden');
+            document.getElementById('videoLoading').classList.remove('hidden');
+            document.getElementById('videoResult').classList.add('hidden');
+            document.getElementById('videoDetails').classList.add('hidden');
+            document.getElementById('downloadBtn').classList.add('hidden');
+            document.getElementById('postOptions').classList.add('hidden');
+
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังสร้างวิดีโอ...';
+
+            try {
+                let result;
+                
+                if (SYSTEM_CONFIG.useMock) {
+                    // Use mock system for testing
+                    result = await createVideoMock(prompt, caption, aspectRatio, frames, postOption);
+                } else {
+                    // Use real backend
+                    result = await createVideoBackend(prompt, caption, aspectRatio, frames, postOption);
                 }
-            }
-        );
-        
-        const publishId = uploadResponse.data.publish_id;
-        
-        // เผยแพร่วิดีโอ
-        await axios.post('https://open.tiktokapis.com/v2/post/publish/video/publish/', {
-            publish_id: publishId,
-            text: caption
-        }, {
-            headers: {
-                'Authorization': `Bearer ${access_token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        res.json({
-            success: true,
-            message: 'โพสต์วิดีโอไปยัง TikTok สำเร็จ'
-        });
-    } catch (error) {
-        console.error('Error posting to TikTok:', error);
-        res.status(500).json({
-            success: false,
-            message: 'โพสต์วิดีโอล้มเหลว'
-        });
-    }
-});
 
-// 6. ตรวจสอบสถานะบัญชี TikTok
-app.get('/api/tiktok/account', async (req, res) => {
-    try {
-        const { access_token } = req.query;
-        
-        const accountResponse = await axios.get('https://open.tiktokapis.com/v2/user/info/', {
-            headers: {
-                'Authorization': `Bearer ${access_token}`
-            }
-        });
-        
-        res.json({
-            success: true,
-            account: accountResponse.data
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'ตรวจสอบบัญชีล้มเหลว'
-        });
-    }
-});
+                // Add to queue
+                const queueItem = {
+                    id: Date.now(),
+                    title: prompt.substring(0, 30) + (prompt.length > 30 ? '...' : ''),
+                    status: 'completed',
+                    caption: caption,
+                    videoUrl: result.videoUrl,
+                    postOption: postOption,
+                    postTime: postOption === 'auto' ? 'ทันทีที่สร้างเสร็จ' : 'รอโพสต์',
+                    createdAt: new Date().toLocaleString('th-TH'),
+                    actions: true
+                };
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Backend server running on http://localhost:${PORT}`);
-    console.log('API Endpoints:');
-    console.log(`  POST   http://localhost:${PORT}/api/create-video`);
-    console.log(`  GET    http://localhost:${PORT}/api/job-status/:jobId`);
-    console.log(`  GET    http://localhost:${PORT}/api/tiktok/auth`);
-    console.log(`  GET    http://localhost:${PORT}/api/tiktok/callback`);
-    console.log(`  POST   http://localhost:${PORT}/api/tiktok/post`);
-    console.log(`  GET    http://localhost:${PORT}/api/tiktok/account`);
-});
+                SYSTEM_CONFIG.queueItems.unshift(queueItem);
+                saveToLocalStorage();
+
+                // Show result
+                document.getElementById('videoLoading').classList.add('hidden');
+                document.getElementById('videoResult').classList.remove('hidden');
+                document.getElementById('videoDetails').classList.remove('hidden');
+                document.getElementById('downloadBtn').classList.remove('hidden');
+                document.getElementById('postOptions').classList.remove('hidden');
+
+                // Set video source
+                document.getElementById('generatedVideo').src = result.videoUrl;
+                document.getElementById('jobId').textContent = `job_${queueItem.id}`;
+                document.getElementById('createdAt').textContent = queueItem.createdAt;
+                document.getElementById('captionOverlay').textContent = 
+                    caption.length > 30 ? caption.substring(0, 30) + "..." : caption;
+
+                // Show success modal
+                showModal('สร้างวิดีโอสำเร็จ!', `วิดีโอของคุณถูกสร้างสำเร็จแล้ว สามารถดาวน์โหลดหรือโพสต์ไปยัง TikTok ได้ทันที`);
+
+                // Update queue display
+                updateQueueDisplay();
+
+            } catch (error) {
+                console.error('Error creating video:', error);
+                showModal('สร้างวิดีโอไม่สำเร็จ', 'เกิดข้อผิดพลาดในการสร้างวิดีโอ: ' + error.message);
+                
+                // Reset to placeholder
+                document.getElementById('videoLoading').classList.add('hidden');
+                document.getElementById('videoPlaceholder').classList.remove('hidden');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-magic mr-2"></i> สร้างและเพิ่มลงคิว';
+            }
+        }
+
+        async function createVideoMock(prompt, caption, aspectRatio, frames, postOption) {
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            // Mock video URL (using a sample video)
+            const videoUrl = "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4";
+            
+            return {
+                success: true,
+                videoUrl: videoUrl,
+                jobId: `mock_${Date.now()}`,
+                message: 'สร้างวิดีโอสำเร็จ (ระบบจำลอง)'
+            };
+        }
+
+        async function createVideoBackend(prompt, caption, aspectRatio, frames, postOption) {
+            const response = await fetch(`${SYSTEM_CONFIG.backendUrl}/api/create-video`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    caption: caption,
+                    aspect_ratio: aspectRatio,
+                    frames: frames,
+                    post_option: postOption
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        }
+
+        function downloadVideo() {
+            const video = document.getElementById('generatedVideo');
+            const videoUrl = video.src;
+            
+            if (videoUrl && videoUrl !== '') {
+                const link = document.createElement('a');
+                link.href = videoUrl;
+                link.download = `tiktok_video_${Date.now()}.mp4`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showModal('ดาวน์โหลดสำเร็จ', 'วิดีโอถูกดาวน์โหลดไปยังอุปกรณ์ของคุณเรียบร้อยแล้ว');
+            }
+        }
+
+        async function postToTikTokAuto() {
+            const caption = document.getElementById('caption').value;
+            
+            showModal('กำลังโพสต์อัตโนมัติ', 'ระบบกำลังโพสต์วิดีโอไปยัง TikTok ให้คุณโดยอัตโนมัติ กรุณารอสักครู่...');
+            
+            // Simulate posting process
+            setTimeout(() => {
+                showModal('โพสต์สำเร็จ!', 'วิดีโอถูกโพสต์ไปยัง TikTok ของคุณเรียบร้อยแล้ว');
+                
+                // Update queue item status
+                if (SYSTEM_CONFIG.queueItems.length > 0) {
+                    SYSTEM_CONFIG.queueItems[0].status = 'posted';
+                    SYSTEM_CONFIG.queueItems[0].postTime = new Date().toLocaleString('th-TH');
+                    saveToLocalStorage();
+                    updateQueueDisplay();
+                }
+            }, 2000);
+        }
+
+        function updateQueueDisplay() {
+            const queueItems = SYSTEM_CONFIG.queueItems;
+            
+            // Update counts
+            const processingCount = queueItems.filter(item => item.status === 'processing').length;
+            const pendingCount = queueItems.filter(item => item.status === 'pending').length;
+            const completedCount = queueItems.filter(item => item.status === 'completed' || item.status === 'posted').length;
+            const totalCount = queueItems.length;
+            
+            document.getElementById('queueCount').textContent = totalCount;
+            document.getElementById('processingCount').textContent = processingCount;
+            document.getElementById('pendingCount').textContent = pendingCount;
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('quotaCount').textContent = `${completedCount}/10`;
+            
+            // Update progress
+            const progress = Math.min((completedCount / 10) * 100, 100);
+            document.getElementById('quotaProgress').style.width = `${progress}%`;
+            
+            // Update queue table if on queue tab
+            if (currentTab === 'queue') {
+                updateQueueTable();
+            }
+        }
+
+        function updateQueueTable() {
+            const tableBody = document.getElementById('queueTableBody');
+            const queueEmpty = document.getElementById('queueEmpty');
+            const queueItems = SYSTEM_CONFIG.queueItems;
+            
+            if (queueItems.length === 0) {
+                tableBody.parentElement.parentElement.classList.add('hidden');
+                queueEmpty.classList.remove('hidden');
+                return;
+            }
+            
+            tableBody.parentElement.parentElement.classList.remove('hidden');
+            queueEmpty.classList.add('hidden');
+            
+            // Clear table body
+            tableBody.innerHTML = '';
+            
+            // Add items to table
+            queueItems.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = 'queue-item';
+                
+                // Determine status badge
+                let statusBadge = '';
+                let statusColor = '';
+                switch(item.status) {
+                    case 'pending':
+                        statusBadge = 'รอสร้าง';
+                        statusColor = 'badge-warning';
+                        break;
+                    case 'processing':
+                        statusBadge = 'กำลังสร้าง';
+                        statusColor = 'badge-info';
+                        break;
+                    case 'completed':
+                        statusBadge = 'สร้างเสร็จ';
+                        statusColor = 'badge-success';
+                        break;
+                    case 'posted':
+                        statusBadge = 'โพสต์แล้ว';
+                        statusColor = 'badge-success';
+                        break;
+                    default:
+                        statusBadge = item.status;
+                        statusColor = 'badge-info';
+                }
+                
+                row.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="font-medium text-gray-900">${item.title}</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <span class="badge ${statusColor}">${statusBadge}</span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="text-gray-900">${item.postTime}</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-gray-500">
+                        ${item.createdAt}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="flex space-x-2">
+                            ${item.videoUrl ? `
+                                <button onclick="playVideo('${item.videoUrl}', '${item.caption}')" class="text-blue-600 hover:text-blue-800" title="เล่นวิดีโอ">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <a href="${item.videoUrl}" download class="text-green-600 hover:text-green-800" title="ดาวน์โหลด">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            ` : ''}
+                            <button onclick="deleteQueueItem(${item.id})" class="text-red-600 hover:text-red-800" title="ลบ">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        function playVideo(videoUrl, caption) {
+            document.getElementById('generatedVideo').src = videoUrl;
+            document.getElementById('captionOverlay').textContent = 
+                caption.length > 30 ? caption.substring(0, 30) + "..." : caption;
+            
+            document.getElementById('videoPlaceholder').classList.add('hidden');
+            document.getElementById('videoLoading').classList.add('hidden');
+            document.getElementById('videoResult').classList.remove('hidden');
+            document.getElementById('videoDetails').classList.remove('hidden');
+            document.getElementById('downloadBtn').classList.remove('hidden');
+            document.getElementById('postOptions').classList.remove('hidden');
+            
+            switchTab('create');
+        }
+
+        function deleteQueueItem(id) {
+            SYSTEM_CONFIG.queueItems = SYSTEM_CONFIG.queueItems.filter(item => item.id !== id);
+            saveToLocalStorage();
+            updateQueueDisplay();
+            showToast('ลบงานออกจากคิวสำเร็จ', 'success');
+        }
+
+        function loadAccounts() {
+            const accountsGrid = document.getElementById('accountsGrid');
+            const accounts = SYSTEM_CONFIG.accounts || [];
+            
+            if (accounts.length === 0) {
+                accountsGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-users text-gray-300 text-5xl mb-4"></i>
+                        <h3 class="text-xl font-medium text-gray-700 mb-2">ยังไม่มีบัญชี TikTok</h3>
+                        <p class="text-gray-500 mb-6">เชื่อมต่อบัญชี TikTok ของคุณเพื่อเริ่มโพสต์คลิปอัตโนมัติ</p>
+                        <button onclick="document.getElementById('connectAccountModal').classList.remove('hidden')" class="tiktok-gradient hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
+                            <i class="fab fa-tiktok mr-2"></i> เชื่อมต่อบัญชี TikTok
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            accountsGrid.innerHTML = '';
+            
+            accounts.forEach(account => {
+                const accountCard = document.createElement('div');
+                accountCard.className = 'border border-gray-200 rounded-xl p-6';
+                accountCard.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <div class="flex items-center justify-center h-12 w-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white font-bold text-xl mr-4">
+                            ${account.username ? account.username.charAt(0).toUpperCase() : 'T'}
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-800 text-lg">${account.name || 'บัญชี TikTok'}</div>
+                            <div class="text-gray-600">${account.username || '@username'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="text-sm text-gray-500 mb-1">สถานะ</div>
+                        <div class="font-bold ${account.connected ? 'text-green-600' : 'text-red-600'}">
+                            <i class="fas fa-circle text-xs mr-1"></i>
+                            ${account.connected ? 'เชื่อมต่อแล้ว' : 'ยังไม่ได้เชื่อมต่อ'}
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button onclick="manageAccount('${account.id}')" class="flex-1 bg-purple-100 hover:bg-purple-200 text-purple-700 font-medium py-2 px-3 rounded-lg text-sm transition">
+                            <i class="fas fa-cog mr-1"></i> จัดการ
+                        </button>
+                        <button onclick="disconnectAccount('${account.id}')" class="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 px-3 rounded-lg text-sm transition">
+                            <i class="fas fa-unlink mr-1"></i> ตัดการเชื่อมต่อ
+                        </button>
+                    </div>
+                `;
+                accountsGrid.appendChild(accountCard);
+            });
+        }
+
+        function connectTikTokOAuth() {
+            // In a real system, this would redirect to TikTok OAuth
+            // For mock system, simulate the process
+            showModal('เชื่อมต่อบัญชี TikTok', 'ระบบกำลังนำคุณไปยังหน้าล็อกอินของ TikTok...');
+            
+            setTimeout(() => {
+                // Simulate successful connection
+                const mockAccount = {
+                    id: `tt_${Date.now()}`,
+                    name: 'บัญชี TikTok ของคุณ',
+                    username: '@your_tiktok',
+                    connected: true,
+                    connectedAt: new Date().toLocaleString('th-TH')
+                };
+                
+                SYSTEM_CONFIG.accounts.push(mockAccount);
+                saveToLocalStorage();
+                loadAccounts();
+                
+                showModal('เชื่อมต่อสำเร็จ!', 'บัญชี TikTok ของคุณถูกเชื่อมต่อกับระบบเรียบร้อยแล้ว');
+                closeModal('connectAccountModal');
+            }, 1500);
+        }
+
+        function addTikTokAccount() {
+            const accountName = document.getElementById('accountName').value;
+            const accessToken = document.getElementById('accessToken').value;
+            
+            if (!accountName || !accessToken) {
+                showModal('ข้อมูลไม่ครบ', 'กรุณากรอกชื่อบัญชีและ Access Token ให้ครบถ้วน');
+                return;
+            }
+            
+            const newAccount = {
+                id: `tt_manual_${Date.now()}`,
+                name: accountName,
+                username: accountName.startsWith('@') ? accountName : `@${accountName}`,
+                accessToken: accessToken,
+                connected: true,
+                connectedAt: new Date().toLocaleString('th-TH')
+            };
+            
+            SYSTEM_CONFIG.accounts.push(newAccount);
+            saveToLocalStorage();
+            loadAccounts();
+            
+            // Clear form
+            document.getElementById('accountName').value = '';
+            document.getElementById('accessToken').value = '';
+            
+            showModal('เพิ่มบัญชีสำเร็จ!', 'บัญชี TikTok ถูกเพิ่มเข้าสู่ระบบเรียบร้อยแล้ว');
+            closeModal('connectAccountModal');
+        }
+
+        function manageAccount(accountId) {
+            showModal('จัดการบัญชี', 'คุณสามารถจัดการการตั้งค่าบัญชี TikTok ของคุณได้ที่นี่');
+        }
+
+        function disconnectAccount(accountId) {
+            SYSTEM_CONFIG.accounts = SYSTEM_CONFIG.accounts.filter(acc => acc.id !== accountId);
+            saveToLocalStorage();
+            loadAccounts();
+            showToast('ตัดการเชื่อมต่อบัญชีสำเร็จ', 'info');
+        }
+
+        function saveSettings() {
+            SYSTEM_CONFIG.backendUrl = document.getElementById('backendUrl').value;
+            SYSTEM_CONFIG.useMock = document.getElementById('enableMock').checked;
+            
+            saveToLocalStorage();
+            showModal('บันทึกการตั้งค่า', 'การตั้งค่าระบบถูกบันทึกเรียบร้อยแล้ว');
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('tiktokAutomationConfig', JSON.stringify(SYSTEM_CONFIG));
+            localStorage.setItem('tiktokQueueItems', JSON.stringify(SYSTEM_CONFIG.queueItems));
+            localStorage.setItem('tiktokAccounts', JSON.stringify(SYSTEM_CONFIG.accounts));
+        }
+
+        function loadFromLocalStorage() {
+            const savedConfig = localStorage.getItem('tiktokAutomationConfig');
+            const savedQueue = localStorage.getItem('tiktokQueueItems');
+            const savedAccounts = localStorage.getItem('tiktokAccounts');
+            
+            if (savedConfig) {
+                Object.assign(SYSTEM_CONFIG, JSON.parse(savedConfig));
+            }
+            
+            if (savedQueue) {
+                SYSTEM_CONFIG.queueItems = JSON.parse(savedQueue);
+            }
+            
+            if (savedAccounts) {
+                SYSTEM_CONFIG.accounts = JSON.parse(savedAccounts);
+            }
+            
+            // Load settings into form
+            document.getElementById('backendUrl').value = SYSTEM_CONFIG.backendUrl;
+            document.getElementById('enableMock').checked = SYSTEM_CONFIG.useMock;
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg text-white fade-in z-50`;
+            
+            if (type === 'success') toast.classList.add('bg-green-500');
+            else if (type === 'error') toast.classList.add('bg-red-500');
+            else if (type === 'warning') toast.classList.add('bg-yellow-500');
+            else toast.classList.add('bg-blue-500');
+            
+            toast.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Make functions available globally
+        window.switchTab = switchTab;
+        window.closeModal = closeModal;
+        window.connectTikTokOAuth = connectTikTokOAuth;
+        window.addTikTokAccount = addTikTokAccount;
+        window.manageAccount = manageAccount;
+        window.disconnectAccount = disconnectAccount;
+        window.playVideo = playVideo;
+        window.deleteQueueItem = deleteQueueItem;
+    </script>
+</body>
+</html>
