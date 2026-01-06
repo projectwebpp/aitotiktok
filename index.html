@@ -6,7 +6,8 @@
     <title>TikTok Automation System | ระบบสร้างและโพสต์คลิปอัตโนมัติ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- ใช้ QRCode.js เวอร์ชันใหม่กว่าและแก้ไขลิงก์ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <!-- Import Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-database-compat.js"></script>
@@ -88,10 +89,26 @@
             0% { left: -100%; }
             100% { left: 100%; }
         }
+        /* สไตล์สำหรับ QR Code */
+        #qrCodeCanvas {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .fallback-video {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen">
+        <!-- ส่วนหัวเว็บไซต์ (เหมือนเดิม) -->
         <header class="gradient-bg text-white py-6 shadow-lg">
             <div class="container mx-auto px-4">
                 <div class="flex flex-col md:flex-row justify-between items-center">
@@ -602,7 +619,8 @@
                         <p class="text-gray-600 mb-4">เปิดแอป TikTok บนมือถือแล้วสแกน QR Code นี้</p>
                         
                         <div class="qr-code-container mb-4">
-                            <div id="qrCode" class="mb-4"></div>
+                            <!-- เปลี่ยนเป็นใช้ div สำหรับ QR Code -->
+                            <div id="qrCode" style="width: 200px; height: 200px;"></div>
                             <div class="text-sm text-gray-600 mb-2">QR Code จะหมดอายุใน: <span id="qrExpiry">60</span> วินาที</div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
                                 <div id="qrTimer" class="bg-purple-600 h-2 rounded-full" style="width: 100%"></div>
@@ -915,7 +933,8 @@
             qrCodeTimer: null,
             qrCodeExpiry: 60,
             qrCodeData: null,
-            qrCodeCheckInterval: null
+            qrCodeCheckInterval: null,
+            qrCodeInstance: null // เพิ่มตัวแปรเก็บ QRCode instance
         };
 
         // DOM Elements
@@ -1314,7 +1333,7 @@
             startQRCodeTimer();
         }
 
-        // Generate QR Code for TikTok login
+        // Generate QR Code for TikTok login - แก้ไขปัญหาหลัก
         function generateQRCodeForLogin() {
             // Generate unique session ID
             const sessionId = 'tiktok_qr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -1337,26 +1356,55 @@
             qrCodeElement.innerHTML = '';
             
             // Create QR Code URL (จำลอง)
-            const qrUrl = `https://tiktok-qr-login.example.com/auth?session=${sessionId}&redirect=${encodeURIComponent(window.location.href)}`;
+            const qrUrl = `https://tiktok.com/oauth/authorize?client_key=demo&scope=user.info.basic,video.upload&redirect_uri=${encodeURIComponent(window.location.href)}&state=${sessionId}&response_type=code`;
             
-            QRCode.toCanvas(qrUrl, { 
-                width: 200, 
-                height: 200,
-                margin: 1,
-                color: {
-                    dark: '#000000',
-                    light: '#FFFFFF'
-                }
-            }, function (err, canvas) {
-                if (err) {
-                    console.error('Error generating QR code:', err);
-                    qrCodeElement.innerHTML = '<div class="text-red-500">เกิดข้อผิดพลาดในการสร้าง QR Code</div>';
-                    return;
+            // ตรวจสอบว่า QRCode library โหลดมาหรือไม่
+            if (typeof QRCode === 'undefined') {
+                qrCodeElement.innerHTML = `
+                    <div class="fallback-video rounded-lg p-4 mb-4">
+                        <i class="fas fa-exclamation-triangle text-3xl mb-3"></i>
+                        <p class="font-bold">QR Code Library ไม่พร้อมใช้งาน</p>
+                        <p class="text-sm mt-2">กรุณาลองรีเฟรชหน้าเว็บหรือลองวิธีล็อกอินอื่น</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                // ลบ QR Code เก่าถ้ามี
+                if (SYSTEM_CONFIG.qrCodeInstance) {
+                    SYSTEM_CONFIG.qrCodeInstance.clear();
                 }
                 
-                canvas.classList.add('qr-animation');
-                qrCodeElement.appendChild(canvas);
-            });
+                // สร้าง QR Code ใหม่
+                SYSTEM_CONFIG.qrCodeInstance = new QRCode(qrCodeElement, {
+                    text: qrUrl,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // เพิ่ม animation class
+                const qrCodeImg = qrCodeElement.querySelector('img');
+                if (qrCodeImg) {
+                    qrCodeImg.classList.add('qr-animation');
+                }
+                
+            } catch (err) {
+                console.error('Error generating QR code:', err);
+                qrCodeElement.innerHTML = `
+                    <div class="fallback-video rounded-lg p-4 mb-4">
+                        <i class="fas fa-exclamation-triangle text-3xl mb-3"></i>
+                        <p class="font-bold">ไม่สามารถสร้าง QR Code ได้</p>
+                        <p class="text-sm mt-2">กรุณาลองวิธีล็อกอินอื่น</p>
+                        <div class="mt-4 p-3 bg-gray-800 text-white rounded text-xs">
+                            <p>Session ID: ${sessionId.substring(0, 20)}...</p>
+                        </div>
+                    </div>
+                `;
+            }
             
             // Start checking for login status
             startCheckingQRCodeStatus(sessionId);
@@ -1489,6 +1537,11 @@
 
         // Refresh QR Code
         function refreshQRCode() {
+            // ลบ QR Code เก่า
+            if (SYSTEM_CONFIG.qrCodeInstance) {
+                SYSTEM_CONFIG.qrCodeInstance.clear();
+            }
+            
             generateQRCodeForLogin();
             
             // Reset timer
@@ -1506,6 +1559,11 @@
         function cancelQRCodeLogin() {
             clearInterval(SYSTEM_CONFIG.qrCodeTimer);
             clearInterval(SYSTEM_CONFIG.qrCodeCheckInterval);
+            
+            // ลบ QR Code
+            if (SYSTEM_CONFIG.qrCodeInstance) {
+                SYSTEM_CONFIG.qrCodeInstance.clear();
+            }
             
             document.getElementById('qrCodeLoginForm').classList.add('hidden');
             document.getElementById('loginContent').classList.remove('hidden');
@@ -2029,28 +2087,29 @@
             return categoryMap[selectedCategory] || 'ทั่วไป';
         }
 
-        // Get video URLs from Mixkit
+        // Get video URLs from Mixkit - แก้ไขปัญหาวิดีโอไม่สามารถโหลดได้
         function getVideoFromMixkit(category) {
+            // ใช้ลิงก์วิดีโอตัวอย่างที่เสถียรกว่า
             const videoLibrary = {
                 'สาวน้อย': [
-                    'https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-modern-loft-1237-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-smiling-woman-with-shopping-bags-1246-large.mp4'
+                    'https://assets.mixkit.co/videos/preview/mixkit-smiling-woman-with-shopping-bags-1246-large.mp4',
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'
                 ],
                 'ทิวทัศน์': [
                     'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-city-skyline-at-dusk-1251-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-palm-trees-under-a-blue-sky-2332-large.mp4'
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
                 ],
                 'ไลฟ์สไตล์': [
                     'https://assets.mixkit.co/videos/preview/mixkit-woman-traveling-with-her-suitcase-1240-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-young-people-walking-in-a-park-4159-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-woman-with-a-shopping-cart-in-a-supermarket-4157-large.mp4'
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4'
                 ],
                 'ทั่วไป': [
                     'https://assets.mixkit.co/videos/preview/mixkit-people-paving-a-way-trough-a-snowstorm-4156-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-city-traffic-on-a-bridge-4158-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-slicing-a-lemon-into-a-glass-of-water-4154-large.mp4'
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4'
                 ]
             };
             
@@ -2061,14 +2120,52 @@
             return videos[randomIndex];
         }
 
-        // Generate video from prompt
+        // Generate video from prompt - แก้ไขปัญหาการสร้างคลิป
         async function generateVideoFromPrompt(prompt, keywords) {
-            const videoCategory = determineVideoCategory(keywords);
-            const videoUrl = getVideoFromMixkit(videoCategory);
-            return videoUrl;
+            try {
+                const videoCategory = determineVideoCategory(keywords);
+                const videoUrl = getVideoFromMixkit(videoCategory);
+                
+                // ตรวจสอบว่าวิดีโอโหลดได้หรือไม่
+                const testVideoLoad = await testVideoUrl(videoUrl);
+                
+                if (testVideoLoad) {
+                    return videoUrl;
+                } else {
+                    // ใช้ fallback วิดีโอถ้าไม่สามารถโหลดได้
+                    return 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+                }
+            } catch (error) {
+                console.error('Error generating video:', error);
+                // ใช้ fallback วิดีโอ
+                return 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+            }
         }
 
-        // Generate video preview from prompt
+        // Test if video URL is accessible
+        async function testVideoUrl(url) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                
+                video.onloadedmetadata = () => {
+                    resolve(true);
+                };
+                
+                video.onerror = () => {
+                    resolve(false);
+                };
+                
+                video.src = url;
+                
+                // Timeout after 3 seconds
+                setTimeout(() => {
+                    resolve(false);
+                }, 3000);
+            });
+        }
+
+        // Generate video preview from prompt - แก้ไขปัญหาหลัก
         async function generateVideoPreview() {
             const prompt = document.getElementById('prompt').value;
             const caption = document.getElementById('caption').value;
@@ -2087,12 +2184,13 @@
             
             // Show video placeholder with loading
             document.getElementById('videoPlaceholder').innerHTML = `
-                <div class="text-center text-white p-4">
+                <div class="fallback-video rounded-lg p-4">
                     <div class="loading-spinner mx-auto mb-4"></div>
                     <p class="text-lg">กำลังสร้างคลิปจาก AI...</p>
                     <p class="text-sm opacity-75 mt-2">กำลังประมวลผล: "${prompt.substring(0, 30)}..."</p>
                 </div>
             `;
+            document.getElementById('videoPlaceholder').style.display = 'flex';
             
             try {
                 // วิเคราะห์ keywords
@@ -2140,10 +2238,10 @@
             } catch (error) {
                 console.error('Error generating video:', error);
                 
-                // ใช้ตัวอย่างวิดีโอถ้าสร้างไม่สำเร็จ
+                // ใช้ fallback วิดีโอ
                 const fallbackVideos = [
-                    'https://assets.mixkit.co/videos/preview/mixkit-young-people-walking-in-a-park-4159-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-city-traffic-on-a-bridge-4158-large.mp4'
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
                 ];
                 const randomIndex = Math.floor(Math.random() * fallbackVideos.length);
                 
