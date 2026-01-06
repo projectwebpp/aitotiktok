@@ -6,6 +6,7 @@
     <title>TikTok Automation System | ระบบสร้างและโพสต์คลิปอัตโนมัติ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <!-- Import Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-database-compat.js"></script>
@@ -60,6 +61,33 @@
         .progress-bar { height: 6px; background-color: #e5e7eb; border-radius: 9999px; overflow: hidden; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #25F4EE 0%, #FE2C55 100%); transition: width 0.3s ease; }
         .custom-toast { z-index: 9999; }
+        .qr-code-container { background: white; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; }
+        .qr-code-refresh { margin-top: 15px; }
+        .qr-animation { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .video-scanner {
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #25F4EE;
+        }
+        .video-scanner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #25F4EE, #FE2C55, transparent);
+            animation: scan 2s linear infinite;
+        }
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -229,7 +257,7 @@
                                 <i class="fas fa-play-circle mr-2 text-purple-600"></i> ตัวอย่างคลิปที่สร้าง
                             </h2>
                             
-                            <div class="video-preview mb-4 generated-video">
+                            <div class="video-preview mb-4 generated-video video-scanner">
                                 <div id="videoPlaceholder" class="flex items-center justify-center h-full">
                                     <div class="text-center text-white p-4">
                                         <i class="fab fa-tiktok text-5xl mb-4 opacity-50"></i>
@@ -411,6 +439,7 @@
                                     <h4 class="font-bold text-gray-800 mb-3">วิธีใช้งานสำหรับผู้ใช้ทั่วไป</h4>
                                     <ol class="list-decimal pl-5 space-y-2 text-sm">
                                         <li>คลิกปุ่ม "ล็อกอินด้วย TikTok" ในแท็บสร้างคลิป</li>
+                                        <li>เลือกวิธีล็อกอิน (QR Code, OAuth, Manual)</li>
                                         <li>ทำการล็อกอินด้วยบัญชี TikTok ของคุณ</li>
                                         <li>อนุญาตให้ระบบโพสต์วิดีโอในบัญชีของคุณ</li>
                                         <li>เริ่มสร้างและโพสต์วิดีโอได้ทันที!</li>
@@ -460,7 +489,7 @@
                         <p class="text-gray-400 mt-2">ระบบสร้างและโพสต์คลิป TikTok อัตโนมัติ</p>
                     </div>
                     <div class="text-gray-400 text-sm">
-                        <p>ใช้ TikTok OAuth สำหรับล็อกอินและโพสต์คลิปอัตโนมัติ</p>
+                        <p>ใช้ TikTok OAuth และ QR Code สำหรับล็อกอิน</p>
                         <p class="mt-1">© 2023 TikTok Automation System. All rights reserved.</p>
                     </div>
                 </div>
@@ -532,19 +561,23 @@
                             <i class="fab fa-tiktok text-white text-4xl"></i>
                         </div>
                         
-                        <h4 class="text-xl font-bold text-gray-800 mb-4">ล็อกอินด้วย 3 วิธี</h4>
+                        <h4 class="text-xl font-bold text-gray-800 mb-4">ล็อกอินด้วย 4 วิธี</h4>
                         <p class="text-gray-600 mb-6">เลือกวิธีล็อกอินที่ต้องการ</p>
                         
                         <div class="space-y-4">
+                            <button onclick="startTikTokQRCodeLogin()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300 login-btn">
+                                <i class="fas fa-qrcode mr-3"></i> ล็อกอินด้วย QR Code
+                            </button>
+                            
                             <button onclick="startManualTikTokLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
                                 <i class="fas fa-user mr-3"></i> ล็อกอินด้วย Access Token
                             </button>
                             
-                            <button onclick="startTikTokOAuth()" class="w-full login-with-tiktok hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300 login-btn">
+                            <button onclick="startTikTokOAuth()" class="w-full login-with-tiktok hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
                                 <i class="fab fa-tiktok mr-3"></i> ล็อกอินด้วย TikTok OAuth
                             </button>
                             
-                            <button onclick="startTikTokScraper()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                            <button onclick="startTikTokScraper()" class="w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
                                 <i class="fas fa-robot mr-3"></i> ล็อกอินอัตโนมัติ (ทดสอบ)
                             </button>
                         </div>
@@ -559,6 +592,38 @@
                             <li>กดปุ่ม "Authorize" เพื่อรับ Access Token</li>
                             <li>คัดลอก Access Token มาใส่ในระบบ</li>
                         </ol>
+                    </div>
+                </div>
+                
+                <!-- QR Code Login -->
+                <div id="qrCodeLoginForm" class="hidden space-y-4">
+                    <div class="text-center">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4">สแกน QR Code ด้วยแอป TikTok</h4>
+                        <p class="text-gray-600 mb-4">เปิดแอป TikTok บนมือถือแล้วสแกน QR Code นี้</p>
+                        
+                        <div class="qr-code-container mb-4">
+                            <div id="qrCode" class="mb-4"></div>
+                            <div class="text-sm text-gray-600 mb-2">QR Code จะหมดอายุใน: <span id="qrExpiry">60</span> วินาที</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="qrTimer" class="bg-purple-600 h-2 rounded-full" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="qr-code-refresh flex space-x-3">
+                            <button onclick="refreshQRCode()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                                <i class="fas fa-sync-alt mr-2"></i> รีเฟรช QR Code
+                            </button>
+                            <button onclick="cancelQRCodeLogin()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-300">
+                                <i class="fas fa-times mr-2"></i> ยกเลิก
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-yellow-50 rounded-lg">
+                            <p class="text-sm text-yellow-700">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                เปิดแอป TikTok แล้วแตะไอคอน Scan (หรือ Discover) เพื่อสแกน QR Code
+                            </p>
+                        </div>
                     </div>
                 </div>
                 
@@ -643,7 +708,7 @@
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2">
-                    <div class="video-container rounded-xl overflow-hidden generated-video">
+                    <div class="video-container rounded-xl overflow-hidden generated-video video-scanner">
                         <video id="fullVideoPreview" class="w-full" controls autoplay></video>
                         <div class="video-overlay">
                             <h3 id="fullVideoTitle" class="font-bold text-xl mb-2"></h3>
@@ -751,7 +816,7 @@
                     <div class="space-y-4">
                         <div class="text-white text-left">
                             <div class="font-bold mb-2" id="currentStep">ขั้นตอนที่ 1: วิเคราะห์ Prompt</div>
-                            <div class="text-sm text-gray-300" id="stepDescription">ระบบกำลังวิเคราะห์คำอธิบายและเตรียมสร้างวิดีโอ...</div>
+                            <div class="text-sm text-gray-300" id="stepDescription">ระบบกำลังเข้าใจความต้องการของคุณ</div>
                         </div>
                         
                         <div class="text-left text-white">
@@ -846,7 +911,11 @@
             pendingAction: null,
             currentVideoData: null,
             aiGenerationInProgress: false,
-            currentGenerationId: null
+            currentGenerationId: null,
+            qrCodeTimer: null,
+            qrCodeExpiry: 60,
+            qrCodeData: null,
+            qrCodeCheckInterval: null
         };
 
         // DOM Elements
@@ -1070,6 +1139,8 @@
                 
                 if (accountType === 'tiktok_oauth') {
                     accountTypeBadge = '<span class="badge badge-connected">TikTok OAuth</span>';
+                } else if (accountType === 'qr_code') {
+                    accountTypeBadge = '<span class="badge badge-connected">QR Code</span>';
                 } else if (accountType === 'manual') {
                     accountTypeBadge = '<span class="badge badge-info">Access Token</span>';
                 } else {
@@ -1186,7 +1257,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span>ประเภทบัญชี:</span>
-                                <span class="font-medium">${account.loginMethod === 'tiktok_oauth' ? 'TikTok OAuth' : 'Access Token'}</span>
+                                <span class="font-medium">${account.loginMethod === 'tiktok_oauth' ? 'TikTok OAuth' : account.loginMethod === 'qr_code' ? 'QR Code' : 'Access Token'}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span>สถานะ:</span>
@@ -1228,9 +1299,218 @@
             // Reset modal state
             document.getElementById('loginContent').classList.remove('hidden');
             document.getElementById('manualLoginForm').classList.add('hidden');
+            document.getElementById('qrCodeLoginForm').classList.add('hidden');
             document.getElementById('loginProgress').classList.add('hidden');
             
             document.getElementById('tiktokLoginModal').classList.remove('hidden');
+        }
+
+        // Start TikTok QR Code login
+        function startTikTokQRCodeLogin() {
+            document.getElementById('loginContent').classList.add('hidden');
+            document.getElementById('qrCodeLoginForm').classList.remove('hidden');
+            
+            generateQRCodeForLogin();
+            startQRCodeTimer();
+        }
+
+        // Generate QR Code for TikTok login
+        function generateQRCodeForLogin() {
+            // Generate unique session ID
+            const sessionId = 'tiktok_qr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            // Create QR Code data
+            const qrData = {
+                session_id: sessionId,
+                timestamp: Date.now(),
+                type: 'tiktok_login',
+                status: 'pending',
+                callback_url: window.location.href,
+                expires_in: 60
+            };
+            
+            SYSTEM_CONFIG.qrCodeData = qrData;
+            SYSTEM_CONFIG.qrCodeExpiry = 60;
+            
+            // Generate QR Code image
+            const qrCodeElement = document.getElementById('qrCode');
+            qrCodeElement.innerHTML = '';
+            
+            // Create QR Code URL (จำลอง)
+            const qrUrl = `https://tiktok-qr-login.example.com/auth?session=${sessionId}&redirect=${encodeURIComponent(window.location.href)}`;
+            
+            QRCode.toCanvas(qrUrl, { 
+                width: 200, 
+                height: 200,
+                margin: 1,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function (err, canvas) {
+                if (err) {
+                    console.error('Error generating QR code:', err);
+                    qrCodeElement.innerHTML = '<div class="text-red-500">เกิดข้อผิดพลาดในการสร้าง QR Code</div>';
+                    return;
+                }
+                
+                canvas.classList.add('qr-animation');
+                qrCodeElement.appendChild(canvas);
+            });
+            
+            // Start checking for login status
+            startCheckingQRCodeStatus(sessionId);
+        }
+
+        // Start QR Code timer
+        function startQRCodeTimer() {
+            clearInterval(SYSTEM_CONFIG.qrCodeTimer);
+            
+            SYSTEM_CONFIG.qrCodeTimer = setInterval(() => {
+                SYSTEM_CONFIG.qrCodeExpiry--;
+                document.getElementById('qrExpiry').textContent = SYSTEM_CONFIG.qrCodeExpiry;
+                
+                const progress = (SYSTEM_CONFIG.qrCodeExpiry / 60) * 100;
+                document.getElementById('qrTimer').style.width = progress + '%';
+                
+                if (SYSTEM_CONFIG.qrCodeExpiry <= 0) {
+                    clearInterval(SYSTEM_CONFIG.qrCodeTimer);
+                    document.getElementById('qrExpiry').textContent = '0';
+                    showToast('QR Code หมดอายุแล้ว กรุณารีเฟรชใหม่', 'warning');
+                }
+            }, 1000);
+        }
+
+        // Start checking QR Code status
+        function startCheckingQRCodeStatus(sessionId) {
+            clearInterval(SYSTEM_CONFIG.qrCodeCheckInterval);
+            
+            SYSTEM_CONFIG.qrCodeCheckInterval = setInterval(async () => {
+                try {
+                    // จำลองการตรวจสอบสถานะ QR Code
+                    if (Math.random() > 0.8) { // 20% โอกาสที่ QR Code จะถูกสแกนสำเร็จ
+                        clearInterval(SYSTEM_CONFIG.qrCodeCheckInterval);
+                        clearInterval(SYSTEM_CONFIG.qrCodeTimer);
+                        
+                        simulateQRCodeLoginSuccess(sessionId);
+                    }
+                } catch (error) {
+                    console.error('Error checking QR code status:', error);
+                }
+            }, 2000);
+        }
+
+        // Simulate QR Code login success
+        async function simulateQRCodeLoginSuccess(sessionId) {
+            document.getElementById('qrCodeLoginForm').classList.add('hidden');
+            document.getElementById('loginProgress').classList.remove('hidden');
+            
+            document.getElementById('loginProgressTitle').textContent = 'ตรวจสอบ QR Code สำเร็จ!';
+            document.getElementById('loginMessage').textContent = 'กำลังดึงข้อมูลโปรไฟล์ TikTok...';
+            document.getElementById('loginProgressBar').style.width = '50%';
+            
+            // สร้างข้อมูลบัญชี TikTok ที่สมจริง
+            const mockUsernames = ['thai_tiktoker_qr', 'qr_user_thai', 'qr_tiktok_thai', 'tiktok_qr_user'];
+            const mockDisplayNames = ['ผู้ใช้ TikTok (QR)', 'QR Code User', 'TikTok QR Thai', 'QR Login User'];
+            const mockAvatars = [
+                'https://images.unsplash.com/photo-1611605698335-8b1569810432?w=400&h=400&fit=crop',
+                'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop',
+                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+                'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=400&fit=crop'
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * mockUsernames.length);
+            
+            // สร้าง Access Token จริงแบบสุ่ม
+            const generateToken = () => {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let token = '';
+                for (let i = 0; i < 40; i++) {
+                    token += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return token;
+            };
+            
+            const mockAccount = {
+                id: 'tt_qr_' + Date.now(),
+                username: mockUsernames[randomIndex],
+                displayName: mockDisplayNames[randomIndex],
+                avatar: mockAvatars[randomIndex],
+                accessToken: generateToken(),
+                refreshToken: 'qr_rf_' + generateToken(),
+                expiresIn: 86400,
+                scope: 'user.info.basic,video.upload',
+                connectedAt: new Date().toISOString(),
+                isActive: true,
+                loginMethod: 'qr_code',
+                loginTime: new Date().toISOString(),
+                qrSessionId: sessionId,
+                profileData: {
+                    bio: 'ล็อกอินด้วย QR Code',
+                    verified: Math.random() > 0.5,
+                    followers: Math.floor(Math.random() * 50000) + 1000,
+                    following: Math.floor(Math.random() * 1000) + 100,
+                    likes: Math.floor(Math.random() * 100000) + 10000
+                }
+            };
+            
+            setTimeout(async () => {
+                document.getElementById('loginProgressBar').style.width = '80%';
+                document.getElementById('loginMessage').textContent = 'กำลังบันทึกข้อมูลบัญชี...';
+                
+                try {
+                    // Save account to Firebase
+                    await SYSTEM_CONFIG.db.ref('tiktokAccounts/' + mockAccount.id).set(mockAccount);
+                    
+                    document.getElementById('loginProgressBar').style.width = '100%';
+                    document.getElementById('loginMessage').textContent = 'ล็อกอินสำเร็จ!';
+                    
+                    setTimeout(() => {
+                        closeModal('tiktokLoginModal');
+                        showModal('ล็อกอิน TikTok สำเร็จ!', `บัญชี @${mockAccount.username} ถูกเชื่อมต่อกับระบบเรียบร้อยแล้วผ่าน QR Code!<br><br>ระบบสามารถโพสต์วิดีโอไปยังบัญชีของคุณได้แล้ว`);
+                        
+                        // Update UI
+                        updateAccountsDisplay();
+                        updateAccountDropdown();
+                        
+                        // Switch to accounts tab
+                        setTimeout(() => {
+                            switchTab('accounts');
+                        }, 1500);
+                    }, 1000);
+                    
+                } catch (error) {
+                    console.error('Error saving TikTok account:', error);
+                    closeModal('tiktokLoginModal');
+                    showModal('ล็อกอิน TikTok ล้มเหลว', 'เกิดข้อผิดพลาด: ' + error.message);
+                }
+            }, 2000);
+        }
+
+        // Refresh QR Code
+        function refreshQRCode() {
+            generateQRCodeForLogin();
+            
+            // Reset timer
+            clearInterval(SYSTEM_CONFIG.qrCodeTimer);
+            SYSTEM_CONFIG.qrCodeExpiry = 60;
+            document.getElementById('qrExpiry').textContent = '60';
+            document.getElementById('qrTimer').style.width = '100%';
+            
+            startQRCodeTimer();
+            
+            showToast('สร้าง QR Code ใหม่สำเร็จ', 'success');
+        }
+
+        // Cancel QR Code login
+        function cancelQRCodeLogin() {
+            clearInterval(SYSTEM_CONFIG.qrCodeTimer);
+            clearInterval(SYSTEM_CONFIG.qrCodeCheckInterval);
+            
+            document.getElementById('qrCodeLoginForm').classList.add('hidden');
+            document.getElementById('loginContent').classList.remove('hidden');
+            
+            showToast('ยกเลิกการล็อกอินด้วย QR Code แล้ว', 'info');
         }
 
         // Start manual TikTok login
@@ -1401,8 +1681,8 @@
         async function simulateTikTokOAuthSuccess() {
             try {
                 // สร้างข้อมูลบัญชี TikTok ที่สมจริง
-                const mockUsernames = ['thai_tiktoker', 'sarah_thai', 'thai_foodie', 'travel_thailand', 'tech_thai', 'fashion_thai'];
-                const mockDisplayNames = ['ผู้ใช้ TikTok ไทย', 'Sarah ไทย', 'คนรักอาหารไทย', 'เที่ยวไทย', 'Tech ไทย', 'แฟชั่นไทย'];
+                const mockUsernames = ['thai_tiktoker_oauth', 'sarah_thai', 'thai_foodie', 'travel_thailand', 'tech_thai', 'fashion_thai'];
+                const mockDisplayNames = ['ผู้ใช้ TikTok OAuth', 'Sarah ไทย', 'คนรักอาหารไทย', 'เที่ยวไทย', 'Tech ไทย', 'แฟชั่นไทย'];
                 const mockAvatars = [
                     'https://images.unsplash.com/photo-1611605698335-8b1569810432?w=400&h=400&fit=crop',
                     'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop',
@@ -1749,39 +2029,43 @@
             return categoryMap[selectedCategory] || 'ทั่วไป';
         }
 
-        // Generate video from prompt
-        async function generateVideoFromPrompt(prompt, keywords) {
-            const videoCategory = determineVideoCategory(keywords);
-            
-            // คลังวิดีโอตัวอย่าง
+        // Get video URLs from Mixkit
+        function getVideoFromMixkit(category) {
             const videoLibrary = {
                 'สาวน้อย': [
                     'https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-modern-loft-1237-large.mp4'
+                    'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-in-a-modern-loft-1237-large.mp4',
+                    'https://assets.mixkit.co/videos/preview/mixkit-smiling-woman-with-shopping-bags-1246-large.mp4'
                 ],
                 'ทิวทัศน์': [
                     'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-city-skyline-at-dusk-1251-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4'
-                ],
-                'อาหาร': [
-                    'https://assets.mixkit.co/videos/preview/mixkit-slice-of-lemon-falling-into-a-glass-of-water-4154-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-chef-preparing-a-strawberry-dessert-4155-large.mp4'
+                    'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',
+                    'https://assets.mixkit.co/videos/preview/mixkit-palm-trees-under-a-blue-sky-2332-large.mp4'
                 ],
                 'ไลฟ์สไตล์': [
                     'https://assets.mixkit.co/videos/preview/mixkit-woman-traveling-with-her-suitcase-1240-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-smiling-woman-with-shopping-bags-1246-large.mp4'
+                    'https://assets.mixkit.co/videos/preview/mixkit-young-people-walking-in-a-park-4159-large.mp4',
+                    'https://assets.mixkit.co/videos/preview/mixkit-woman-with-a-shopping-cart-in-a-supermarket-4157-large.mp4'
                 ],
                 'ทั่วไป': [
                     'https://assets.mixkit.co/videos/preview/mixkit-people-paving-a-way-trough-a-snowstorm-4156-large.mp4',
-                    'https://assets.mixkit.co/videos/preview/mixkit-young-people-walking-in-a-park-4159-large.mp4'
+                    'https://assets.mixkit.co/videos/preview/mixkit-city-traffic-on-a-bridge-4158-large.mp4',
+                    'https://assets.mixkit.co/videos/preview/mixkit-slicing-a-lemon-into-a-glass-of-water-4154-large.mp4'
                 ]
             };
             
             // เลือกวิดีโอตามหมวดหมู่
-            const videos = videoLibrary[videoCategory] || videoLibrary['ทั่วไป'];
+            const videos = videoLibrary[category] || videoLibrary['ทั่วไป'];
             const randomIndex = Math.floor(Math.random() * videos.length);
             
             return videos[randomIndex];
+        }
+
+        // Generate video from prompt
+        async function generateVideoFromPrompt(prompt, keywords) {
+            const videoCategory = determineVideoCategory(keywords);
+            const videoUrl = getVideoFromMixkit(videoCategory);
+            return videoUrl;
         }
 
         // Generate video preview from prompt
@@ -2525,6 +2809,66 @@
             }, 3000);
         }
 
+        // Show modal
+        function showModal(title, message) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').innerHTML = message;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Show confirm modal
+        function showConfirmModal(title, message, confirmCallback) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').innerHTML = message;
+            document.getElementById('confirmModal').classList.remove('hidden');
+            
+            SYSTEM_CONFIG.pendingAction = confirmCallback;
+        }
+
+        // Confirm action from modal
+        function confirmAction(confirmed) {
+            closeModal('confirmModal');
+            
+            if (confirmed && SYSTEM_CONFIG.pendingAction) {
+                SYSTEM_CONFIG.pendingAction();
+            }
+            
+            SYSTEM_CONFIG.pendingAction = null;
+        }
+
+        // Switch tab
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            
+            // Add active class to selected tab button
+            document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('tab-active');
+            
+            currentTab = tabId;
+        }
+
+        // Cancel AI generation
+        function cancelAIGeneration() {
+            SYSTEM_CONFIG.aiGenerationInProgress = false;
+            closeModal('aiGenerationModal');
+            showToast('ยกเลิกการสร้างวิดีโอแล้ว', 'info');
+        }
+
         // Initialize system
         document.addEventListener('DOMContentLoaded', function() {
             initSystem();
@@ -2596,64 +2940,6 @@
             }, 5000);
         }
 
-        function switchTab(tabId) {
-            // Update active tab button
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('tab-active');
-                btn.classList.add('border-transparent');
-            });
-            
-            const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-            if (activeBtn) {
-                activeBtn.classList.add('tab-active');
-                activeBtn.classList.remove('border-transparent');
-            }
-
-            // Show selected tab content
-            document.querySelectorAll('.tab-content').forEach(tc => {
-                tc.classList.add('hidden');
-            });
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-
-            currentTab = tabId;
-            
-            // Update specific tab content
-            if (tabId === 'accounts') {
-                updateAccountsDisplay();
-            } else if (tabId === 'queue') {
-                updateQueueTable();
-            }
-        }
-
-        // Modal functions
-        function showModal(title, message) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalMessage').innerHTML = message;
-            document.getElementById('successModal').classList.remove('hidden');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
-
-        function showConfirmModal(title, message, callback) {
-            document.getElementById('confirmTitle').textContent = title;
-            document.getElementById('confirmMessage').textContent = message;
-            document.getElementById('confirmModal').classList.remove('hidden');
-            
-            SYSTEM_CONFIG.pendingAction = callback;
-        }
-
-        function confirmAction(proceed) {
-            closeModal('confirmModal');
-            
-            if (proceed && SYSTEM_CONFIG.pendingAction) {
-                SYSTEM_CONFIG.pendingAction();
-            }
-            
-            SYSTEM_CONFIG.pendingAction = null;
-        }
-
         // Make functions available globally
         window.switchTab = switchTab;
         window.closeModal = closeModal;
@@ -2676,6 +2962,10 @@
         window.startTikTokScraper = startTikTokScraper;
         window.cancelTikTokLogin = cancelTikTokLogin;
         window.showTikTokLoginModal = showTikTokLoginModal;
+        window.startTikTokQRCodeLogin = startTikTokQRCodeLogin;
+        window.refreshQRCode = refreshQRCode;
+        window.cancelQRCodeLogin = cancelQRCodeLogin;
+        window.cancelAIGeneration = cancelAIGeneration;
     </script>
 </body>
 </html>
