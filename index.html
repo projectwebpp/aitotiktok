@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --tiktok-cyan: #25F4EE;
@@ -890,7 +891,7 @@
             <div id="loginStepQR" style="display:none;">
                 <p class="text-sm text-secondary mb-12">เปิดแอป TikTok บนมือถือแล้วสแกน QR Code นี้</p>
                 <div class="qr-wrapper">
-                    <img id="qrImage" src="" alt="QR Code" width="200" height="200">
+                    <div id="qrCanvas" style="width:200px; height:200px; display:flex; align-items:center; justify-content:center;"></div>
                     <div class="qr-timer">
                         <p class="text-xs" style="color:#666;">หมดอายุใน <span id="qrCountdown">60</span> วินาที</p>
                         <div class="qr-timer-bar"><div class="qr-timer-fill" id="qrTimerFill" style="width:100%;"></div></div>
@@ -1576,9 +1577,26 @@
 
     function generateQRCode() {
         const sessionId = 'tt_qr_' + Date.now();
-        const url = `https://www.tiktok.com/auth/authorize?client_key=demo&scope=user.info.basic,video.upload&redirect_uri=${encodeURIComponent(window.location.href)}&state=${sessionId}&response_type=code`;
-        const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(url)}&choe=UTF-8&chld=L|1`;
-        document.getElementById('qrImage').src = qrUrl;
+        // URL ที่จะ encode เป็น QR (ในระบบจริงจะเป็น TikTok OAuth URL)
+        const qrText = `tiktok://auth?client_key=demo&scope=user.info.basic,video.upload&state=${sessionId}&ts=${Date.now()}`;
+
+        const container = document.getElementById('qrCanvas');
+        container.innerHTML = ''; // clear ก่อน
+
+        try {
+            new QRCode(container, {
+                text: qrText,
+                width: 200,
+                height: 200,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        } catch(e) {
+            // fallback: แสดง SVG QR อย่างง่าย
+            container.innerHTML = buildFallbackQR(sessionId);
+        }
+
         startQRCheck(sessionId);
     }
 
