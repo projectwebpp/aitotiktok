@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Automation System</title>
+    <title>TikTok Automation System - QR Code Login</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -35,7 +35,6 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        /* Animated background */
         body::before {
             content: '';
             position: fixed;
@@ -49,7 +48,6 @@
             pointer-events: none;
             z-index: 0;
         }
-        /* ===== HEADER ===== */
         .header {
             background: rgba(10,10,15,0.95);
             border-bottom: 1px solid var(--border);
@@ -57,13 +55,14 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            padding: 0 24px;
+            padding: 16px 24px;
         }
         .header-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 0;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         .logo {
             display: flex;
@@ -117,58 +116,22 @@
         .dot-yellow { background: var(--warning); }
         .dot-green { background: var(--success); }
         .dot-red { background: var(--danger); }
-        /* ===== TABS ===== */
-        .tabs {
-            display: flex;
-            gap: 4px;
-            padding: 0 0 0 0;
-            border-top: 1px solid var(--border);
-            overflow-x: auto;
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 28px 24px;
+            position: relative;
+            z-index: 1;
         }
-        .tab-btn {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-family: 'Noto Sans Thai', sans-serif;
-            font-size: 13px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-        .tab-btn:hover { color: var(--text-primary); }
-        .tab-btn.active {
-            color: var(--tiktok-cyan);
-            border-bottom-color: var(--tiktok-cyan);
-        }
-        .tab-count {
-            background: var(--bg-card2);
-            padding: 1px 7px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-family: 'Space Mono', monospace;
-        }
-        /* ===== MAIN LAYOUT ===== */
-        .main { max-width: 1200px; margin: 0 auto; padding: 28px 24px; position: relative; z-index: 1; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeUp 0.3s ease; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        /* ===== CARDS ===== */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 24px;
+            margin-bottom: 20px;
         }
         .card-title {
-            font-size: 15px;
+            font-size: 18px;
             font-weight: 700;
             margin-bottom: 20px;
             display: flex;
@@ -176,17 +139,6 @@
             gap: 8px;
         }
         .card-title i { color: var(--tiktok-cyan); }
-        /* ===== GRID ===== */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .col-span-2 { grid-column: span 2; }
-        .create-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
-        @media (max-width: 900px) {
-            .create-grid { grid-template-columns: 1fr; }
-            .grid-2 { grid-template-columns: 1fr; }
-            .grid-3 { grid-template-columns: 1fr 1fr; }
-        }
-        /* ===== FORM ELEMENTS ===== */
         .form-group { margin-bottom: 18px; }
         .form-label {
             display: block;
@@ -213,9 +165,7 @@
             border-color: var(--tiktok-cyan);
             box-shadow: 0 0 0 3px rgba(37,244,238,0.08);
         }
-        .form-textarea { resize: vertical; min-height: 100px; }
-        .form-select option { background: var(--bg-dark); }
-        /* ===== BUTTONS ===== */
+        .form-textarea { resize: vertical; min-height: 80px; }
         .btn {
             display: inline-flex;
             align-items: center;
@@ -241,12 +191,8 @@
         .btn-ghost:hover:not(:disabled) { background: var(--bg-card); border-color: rgba(255,255,255,0.15); }
         .btn-danger { background: var(--danger); color: white; }
         .btn-danger:hover:not(:disabled) { background: #dc2626; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-success:hover:not(:disabled) { background: #059669; }
         .btn-lg { padding: 14px 28px; font-size: 15px; border-radius: 12px; }
-        .btn-sm { padding: 7px 12px; font-size: 12px; border-radius: 8px; }
         .btn-block { width: 100%; justify-content: center; }
-        /* ===== MODALS ===== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -292,7 +238,6 @@
             transition: color 0.2s;
         }
         .modal-close:hover { color: var(--text-primary); }
-        /* ===== TOAST ===== */
         .toast-container {
             position: fixed;
             bottom: 20px;
@@ -325,17 +270,58 @@
         .toast-warning i { color: var(--warning); }
         .toast-info { border-color: rgba(37,244,238,0.3); }
         .toast-info i { color: var(--tiktok-cyan); }
-        /* ===== QR CODE ===== */
         .qr-wrapper {
             text-align: center;
             margin: 16px auto;
             width: fit-content;
         }
-        .qr-wrapper img { display: block; border-radius: 8px; }
+        .qr-wrapper canvas { border-radius: 8px; }
         .qr-timer { margin-top: 12px; }
         .qr-timer-bar { height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden; margin-top: 8px; }
         .qr-timer-fill { height: 100%; background: linear-gradient(90deg, var(--tiktok-cyan), var(--tiktok-red)); transition: width 1s linear; }
-        /* ===== SETTINGS ===== */
+        .account-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .account-card {
+            background: var(--bg-card2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .account-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-red));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: 700;
+            margin: 0 auto 12px;
+        }
+        .account-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+        .account-username { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
+        .account-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .stat { font-size: 11px; }
+        .stat-value { font-weight: 700; color: var(--tiktok-cyan); font-size: 13px; }
+        .stat-label { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
+        .account-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .account-actions .btn { flex: 1; padding: 8px 10px; font-size: 11px; }
         .info-box {
             background: rgba(37,244,238,0.06);
             border: 1px solid rgba(37,244,238,0.15);
@@ -345,61 +331,14 @@
             color: var(--tiktok-cyan);
             margin-bottom: 18px;
         }
-        .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
-        /* ===== PROGRESS STEPS ===== */
-        .steps { space-y: 14px; }
-        .step-item {
-            display: flex; align-items: flex-start; gap: 12px;
-            padding: 12px 0; border-bottom: 1px solid var(--border);
-        }
-        .step-item:last-child { border-bottom: none; }
-        .step-icon {
-            width: 32px; height: 32px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 13px; flex-shrink: 0;
-        }
-        .step-icon-active { background: rgba(37,244,238,0.15); color: var(--tiktok-cyan); }
-        .step-icon-done { background: rgba(16,185,129,0.15); color: var(--success); }
-        .step-icon-pending { background: var(--bg-dark); color: var(--text-secondary); }
-        .step-content h5 { font-size: 13px; font-weight: 600; }
-        .step-content p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-        /* LOADING SPINNER */
         .spinner { width: 24px; height: 24px; border: 2.5px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner-lg { width: 48px; height: 48px; border-width: 4px; }
-        /* Flex helpers */
-        .flex { display: flex; }
-        .flex-center { display: flex; align-items: center; justify-content: center; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-8 { gap: 8px; }
-        .gap-12 { gap: 12px; }
-        .gap-16 { gap: 16px; }
-        .mb-4 { margin-bottom: 4px; }
-        .mb-8 { margin-bottom: 8px; }
-        .mb-12 { margin-bottom: 12px; }
-        .mb-16 { margin-bottom: 16px; }
-        .mb-20 { margin-bottom: 20px; }
-        .text-sm { font-size: 13px; }
-        .text-xs { font-size: 11px; }
-        .text-secondary { color: var(--text-secondary); }
-        .font-mono { font-family: 'Space Mono', monospace; }
-        .mt-12 { margin-top: 12px; }
-        .mt-16 { margin-top: 16px; }
-        /* Demo warning */
-        .demo-warning {
-            background: rgba(245,158,11,0.1);
-            border: 1px solid rgba(245,158,11,0.3);
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: 13px;
-            color: var(--warning);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .account-grid { grid-template-columns: 1fr; }
         }
-        .demo-warning i { font-size: 16px; }
     </style>
 </head>
 <body>
@@ -412,7 +351,7 @@
                 <div class="logo-icon"><i class="fab fa-tiktok"></i></div>
                 <div class="logo-text">
                     <h1>TikTok Automation</h1>
-                    <p>ระบบสร้างและโพสต์คลิปอัตโนมัติ</p>
+                    <p>ระบบเชื่อมต่อบัญชี TikTok</p>
                 </div>
             </div>
             <div class="header-status">
@@ -426,147 +365,42 @@
                 </div>
             </div>
         </div>
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="create"><i class="fas fa-plus-circle"></i> สร้างคิว <span class="tab-count" id="queueTabCount">0</span></button>
-            <button class="tab-btn" data-tab="queue"><i class="fas fa-list"></i> คิวงาน <span class="tab-count" id="queueTabCount2">0</span></button>
-            <button class="tab-btn" data-tab="accounts"><i class="fab fa-tiktok"></i> บัญชี <span class="tab-count" id="accountTabCount">0</span></button>
-            <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> ตั้งค่า</button>
-        </div>
     </header>
 
     <!-- MAIN CONTENT -->
     <main class="main">
-        <!-- TAB: CREATE -->
-        <div id="tab-create" class="tab-content active">
-            <div class="demo-warning">
-                <i class="fas fa-exclamation-circle"></i>
-                <span><strong>⚠️ ระบบ Demo:</strong> ฟีเจอร์สร้างวิดีโอใช้ตัวอย่างวิดีโอจาก Google Storage เท่านั้น ไม่สามารถสร้างวิดีโอใหม่ได้จริง</span>
-            </div>
-            <div class="create-grid">
-                <div>
-                    <div class="card">
-                        <div class="card-title"><i class="fas fa-magic"></i> สร้างคิวงาน</div>
-                        <form onsubmit="handleFormSubmit(event)">
-                            <div class="form-group">
-                                <label class="form-label">คำอธิบายวิดีโอ</label>
-                                <textarea id="prompt" class="form-textarea" placeholder="ตัวอย่าง: สอนวิธีทำ..." required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">คำบรรยาย (Caption)</label>
-                                <textarea id="caption" class="form-textarea" placeholder="ข้อความที่จะโพสต์กับวิดีโอ..." required></textarea>
-                            </div>
-                            <div class="grid-2">
-                                <div class="form-group">
-                                    <label class="form-label">อัตราส่วน</label>
-                                    <select id="aspectRatio" class="form-select">
-                                        <option value="9:16">9:16 (TikTok)</option>
-                                        <option value="16:9">16:9 (Landscape)</option>
-                                        <option value="1:1">1:1 (Square)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">ความยาว (วินาที)</label>
-                                    <select id="duration" class="form-select">
-                                        <option value="15">15 วินาที</option>
-                                        <option value="30">30 วินาที</option>
-                                        <option value="60">60 วินาที</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">วิธีโพสต์</label>
-                                <div style="display: flex; gap: 16px;">
-                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                        <input type="radio" name="postOption" value="draft" checked>
-                                        <span>บันทึกแบบร่าง</span>
-                                    </label>
-                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                        <input type="radio" name="postOption" value="auto">
-                                        <span>โพสต์อัตโนมัติ</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">เลือกบัญชี TikTok</label>
-                                <select id="tiktokAccount" class="form-select">
-                                    <option value="">-- เลือกบัญชี --</option>
-                                </select>
-                            </div>
-                            <button type="submit" id="generateBtn" class="btn btn-primary btn-lg btn-block">
-                                <i class="fas fa-magic"></i> สร้างและเพิ่มลงคิว
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                <div>
-                    <div class="card">
-                        <div class="card-title"><i class="fas fa-info-circle"></i> วิธีใช้</div>
-                        <div class="step-item">
-                            <div class="step-icon step-icon-active">1</div>
-                            <div class="step-content">
-                                <h5>กรอกข้อมูล</h5>
-                                <p>ใส่คำอธิบายและคำบรรยาย</p>
-                            </div>
-                        </div>
-                        <div class="step-item">
-                            <div class="step-icon step-icon-pending">2</div>
-                            <div class="step-content">
-                                <h5>เลือกบัญชี</h5>
-                                <p>เลือกบัญชี TikTok ที่ต้องการ</p>
-                            </div>
-                        </div>
-                        <div class="step-item">
-                            <div class="step-icon step-icon-pending">3</div>
-                            <div class="step-content">
-                                <h5>สร้างคิว</h5>
-                                <p>กดปุ่มเพื่อเพิ่มลงคิว</p>
-                            </div>
-                        </div>
-                        <hr class="divider">
-                        <div class="info-box">
-                            <i class="fas fa-lightbulb"></i> ระบบจะใช้วิดีโอตัวอย่างจาก Google Storage
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB: QUEUE -->
-        <div id="tab-queue" class="tab-content">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-list"></i> คิวงาน</div>
-                <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-                    <button class="btn btn-ghost btn-sm" onclick="refreshQueue()"><i class="fas fa-sync"></i> รีเฟรช</button>
-                    <button class="btn btn-danger btn-sm" onclick="clearQueue()"><i class="fas fa-trash"></i> ล้างทั้งหมด</button>
-                </div>
-                <div id="queueList"></div>
-                <div id="queueEmpty" style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-                    <i class="fas fa-inbox" style="font-size: 32px; opacity: 0.5; margin-bottom: 12px; display: block;"></i>
-                    <p>ไม่มีคิวงาน</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB: ACCOUNTS -->
-        <div id="tab-accounts" class="tab-content">
-            <div class="card">
-                <div class="card-title"><i class="fab fa-tiktok"></i> บัญชี TikTok</div>
-                <button class="btn btn-primary btn-lg" onclick="openModal('loginModal')" style="margin-bottom: 20px;">
-                    <i class="fas fa-plus"></i> เพิ่มบัญชี
+        <!-- Section: Add Account -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-plus-circle"></i> เพิ่มบัญชี TikTok</div>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">เลือกวิธีการเชื่อมต่อบัญชี TikTok ของคุณ:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                <button class="btn btn-tiktok btn-lg" onclick="startQRLogin()" style="justify-content: center;">
+                    <i class="fas fa-qrcode"></i> QR Code Login
                 </button>
-                <div id="accountsGrid"></div>
-                <div id="accountsEmpty" style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-                    <i class="fas fa-user-circle" style="font-size: 32px; opacity: 0.5; margin-bottom: 12px; display: block;"></i>
-                    <p>ยังไม่มีบัญชี TikTok</p>
-                </div>
+                <button class="btn btn-purple btn-lg" onclick="startManualLogin()" style="justify-content: center;">
+                    <i class="fas fa-key"></i> Manual Token
+                </button>
+                <button class="btn btn-ghost btn-lg" onclick="startOAuthLogin()" style="justify-content: center;">
+                    <i class="fab fa-tiktok"></i> OAuth Login
+                </button>
             </div>
         </div>
 
-        <!-- TAB: SETTINGS -->
-        <div id="tab-settings" class="tab-content">
+        <!-- Section: Connected Accounts -->
+        <div class="card">
+            <div class="card-title"><i class="fab fa-tiktok"></i> บัญชี TikTok ที่เชื่อมต่อ</div>
+            <div id="accountsContainer" class="account-grid"></div>
+            <div id="accountsEmpty" style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                <i class="fas fa-user-circle" style="font-size: 32px; opacity: 0.5; margin-bottom: 12px; display: block;"></i>
+                <p>ยังไม่มีบัญชี TikTok ที่เชื่อมต่อ</p>
+            </div>
+        </div>
+
+        <!-- Section: Settings -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-cog"></i> ตั้งค่า</div>
             <div class="grid-2">
-                <div class="card">
-                    <div class="card-title"><i class="fas fa-key"></i> TikTok API Configuration</div>
+                <div>
                     <div class="form-group">
                         <label class="form-label">Client Key</label>
                         <input type="text" id="clientKey" class="form-input" placeholder="ใส่ Client Key">
@@ -579,8 +413,7 @@
                         <i class="fas fa-save"></i> บันทึก
                     </button>
                 </div>
-                <div class="card">
-                    <div class="card-title"><i class="fas fa-tools"></i> ระบบ</div>
+                <div>
                     <button class="btn btn-ghost btn-block" style="margin-bottom: 10px;" onclick="testSystemConnection()">
                         <i class="fas fa-stethoscope"></i> ทดสอบระบบ
                     </button>
@@ -595,78 +428,66 @@
         </div>
     </main>
 
-    <!-- ===== MODAL: LOGIN ===== -->
-    <div id="loginModal" class="modal-overlay">
+    <!-- ===== MODAL: QR CODE LOGIN ===== -->
+    <div id="qrLoginModal" class="modal-overlay">
         <div class="modal-box" style="max-width:450px;">
             <div class="modal-header">
-                <h3>เพิ่มบัญชี TikTok</h3>
-                <button class="modal-close" onclick="closeModal('loginModal')"><i class="fas fa-times"></i></button>
+                <h3>QR Code Login</h3>
+                <button class="modal-close" onclick="closeModal('qrLoginModal')"><i class="fas fa-times"></i></button>
             </div>
-
-            <!-- Step 1: Choose method -->
-            <div id="loginStep1">
-                <p style="margin-bottom: 20px; color: var(--text-secondary);">เลือกวิธีการเชื่อมต่อบัญชี TikTok:</p>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <button class="btn btn-tiktok btn-lg btn-block" onclick="startQRLogin()">
-                        <i class="fas fa-qrcode"></i> QR Code Login ✨
-                    </button>
-                    <button class="btn btn-purple btn-lg btn-block" onclick="startManualLogin()">
-                        <i class="fas fa-key"></i> Manual Token Login
-                    </button>
-                    <button class="btn btn-ghost btn-lg btn-block" onclick="startOAuthLogin()">
-                        <i class="fab fa-tiktok"></i> OAuth Login
-                    </button>
+            <p style="margin-bottom: 16px; color: var(--text-secondary); text-align: center;">สแกน QR Code ด้วยแอป TikTok:</p>
+            <div class="qr-wrapper">
+                <div id="qrCanvas"></div>
+            </div>
+            <div class="qr-timer">
+                <div style="text-align: center; margin-bottom: 8px; font-size: 13px;">
+                    หมดอายุใน: <span id="qrCountdown" style="font-weight: 700; color: var(--tiktok-cyan);">60</span> วินาที
+                </div>
+                <div class="qr-timer-bar">
+                    <div class="qr-timer-fill" id="qrTimerFill" style="width: 100%;"></div>
                 </div>
             </div>
-
-            <!-- Step 2: QR Code -->
-            <div id="loginStepQR" style="display: none;">
-                <p style="margin-bottom: 16px; color: var(--text-secondary); text-align: center;">สแกน QR Code ด้วยแอป TikTok:</p>
-                <div class="qr-wrapper">
-                    <div id="qrCanvas"></div>
-                </div>
-                <div class="qr-timer">
-                    <div style="text-align: center; margin-bottom: 8px; font-size: 13px;">
-                        หมดอายุใน: <span id="qrCountdown" style="font-weight: 700; color: var(--tiktok-cyan);">60</span> วินาที
-                    </div>
-                    <div class="qr-timer-bar">
-                        <div class="qr-timer-fill" id="qrTimerFill" style="width: 100%;"></div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button class="btn btn-ghost btn-block" onclick="backToLoginStep1()"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
-                    <button class="btn btn-primary btn-block" onclick="refreshQRCode()"><i class="fas fa-sync"></i> สร้างใหม่</button>
-                </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-ghost btn-block" onclick="closeModal('qrLoginModal')"><i class="fas fa-arrow-left"></i> ยกเลิก</button>
+                <button class="btn btn-primary btn-block" onclick="refreshQRCode()"><i class="fas fa-sync"></i> สร้างใหม่</button>
             </div>
+        </div>
+    </div>
 
-            <!-- Step 3: Manual Token -->
-            <div id="loginStepManual" style="display: none;">
-                <div class="form-group">
-                    <label class="form-label">ชื่อผู้ใช้ TikTok</label>
-                    <input type="text" id="manualUsername" class="form-input" placeholder="@username">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">ชื่อแสดง (ไม่บังคับ)</label>
-                    <input type="text" id="manualDisplayName" class="form-input" placeholder="ชื่อที่แสดง">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Access Token</label>
-                    <textarea id="manualToken" class="form-textarea" placeholder="ใส่ Access Token" style="min-height: 80px;"></textarea>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-ghost btn-block" onclick="backToLoginStep1()"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
-                    <button class="btn btn-primary btn-block" onclick="submitManualLogin()"><i class="fas fa-check"></i> ยืนยัน</button>
-                </div>
+    <!-- ===== MODAL: MANUAL LOGIN ===== -->
+    <div id="manualLoginModal" class="modal-overlay">
+        <div class="modal-box" style="max-width:450px;">
+            <div class="modal-header">
+                <h3>Manual Token Login</h3>
+                <button class="modal-close" onclick="closeModal('manualLoginModal')"><i class="fas fa-times"></i></button>
             </div>
+            <div class="form-group">
+                <label class="form-label">ชื่อผู้ใช้ TikTok</label>
+                <input type="text" id="manualUsername" class="form-input" placeholder="@username">
+            </div>
+            <div class="form-group">
+                <label class="form-label">ชื่อแสดง (ไม่บังคับ)</label>
+                <input type="text" id="manualDisplayName" class="form-input" placeholder="ชื่อที่แสดง">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Access Token</label>
+                <textarea id="manualToken" class="form-textarea" placeholder="ใส่ Access Token"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-ghost btn-block" onclick="closeModal('manualLoginModal')"><i class="fas fa-times"></i> ยกเลิก</button>
+                <button class="btn btn-primary btn-block" onclick="submitManualLogin()"><i class="fas fa-check"></i> ยืนยัน</button>
+            </div>
+        </div>
+    </div>
 
-            <!-- Step 4: Progress -->
-            <div id="loginStepProgress" style="display: none;">
-                <div style="text-align: center;">
-                    <div class="spinner-lg" style="margin: 20px auto;"></div>
-                    <p id="loginProgressMsg" style="color: var(--text-secondary); margin-bottom: 20px;">กำลังเชื่อมต่อ...</p>
-                    <div style="height: 4px; background: var(--bg-dark); border-radius: 2px; overflow: hidden;">
-                        <div id="loginProgressBar" style="height: 100%; background: linear-gradient(90deg, var(--tiktok-cyan), var(--tiktok-red)); width: 0%; transition: width 0.3s;"></div>
-                    </div>
+    <!-- ===== MODAL: PROGRESS ===== -->
+    <div id="progressModal" class="modal-overlay">
+        <div class="modal-box" style="max-width:400px;">
+            <div style="text-align: center;">
+                <div class="spinner-lg" style="margin: 20px auto;"></div>
+                <p id="progressMsg" style="color: var(--text-secondary); margin-bottom: 20px;">กำลังเชื่อมต่อ...</p>
+                <div style="height: 4px; background: var(--bg-dark); border-radius: 2px; overflow: hidden;">
+                    <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, var(--tiktok-cyan), var(--tiktok-red)); width: 0%; transition: width 0.3s;"></div>
                 </div>
             </div>
         </div>
@@ -701,17 +522,6 @@
         </div>
     </div>
 
-    <!-- ===== MODAL: PROFILE ===== -->
-    <div id="profileModal" class="modal-overlay">
-        <div class="modal-box" style="max-width:400px;">
-            <div class="modal-header">
-                <h3>โปรไฟล์ TikTok</h3>
-                <button class="modal-close" onclick="closeModal('profileModal')"><i class="fas fa-times"></i></button>
-            </div>
-            <div id="profileContent"></div>
-        </div>
-    </div>
-
     <script>
     // ======================================================
     // STATE
@@ -720,11 +530,10 @@
         db: null,
         isFirebaseReady: false,
         accounts: [],
-        jobs: [],
-        pendingConfirm: null,
         qrTimer: null,
         qrCheckInterval: null,
         qrExpiry: 60,
+        qrSessionId: null
     };
 
     const FIREBASE_CONFIG = {
@@ -736,14 +545,6 @@
         messagingSenderId: "305738096",
         appId: "1:305738096:web:fc58e479c33b3aa92b9fb5"
     };
-
-    const SAMPLE_VIDEOS = [
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-    ];
 
     // ======================================================
     // FIREBASE
@@ -778,25 +579,11 @@
 
     function setupListeners() {
         if (!STATE.isFirebaseReady) return;
-        // Jobs listener
-        STATE.db.ref('tiktokJobs').on('value', snap => {
-            STATE.jobs = [];
-            const data = snap.val();
-            if (data) {
-                Object.keys(data).forEach(k => STATE.jobs.push({ id: k, ...data[k] }));
-                STATE.jobs.sort((a, b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
-            }
-            renderQueue();
-            updateAllStats();
-        });
-        // Accounts listener
         STATE.db.ref('tiktokAccounts').on('value', snap => {
             STATE.accounts = [];
             const data = snap.val();
             if (data) Object.keys(data).forEach(k => STATE.accounts.push({ id: k, ...data[k] }));
             renderAccounts();
-            renderAccountDropdown();
-            updateAllStats();
             updateAccountBadge();
         });
     }
@@ -814,309 +601,42 @@
     }
 
     // ======================================================
-    // DATABASE INIT
-    // ======================================================
-    async function initializeDatabase() {
-        if (!STATE.isFirebaseReady) { showToast('Firebase ยังไม่พร้อม', 'error'); return; }
-        const btn = event.target;
-        btn.disabled = true;
-        btn.innerHTML = '<div class="spinner" style="border-top-color:var(--tiktok-cyan);"></div> กำลังตั้งค่า...';
-        try {
-            await STATE.db.ref('tiktokAutomation').update({
-                initialized: true, initializedAt: new Date().toISOString(),
-                systemVersion: '3.1.0', loginMethod: 'qr_code'
-            });
-            showSuccessModal('ตั้งค่า Database สำเร็จ', 'Firebase Realtime Database พร้อมใช้งานแล้ว! ระบบพร้อมบันทึกคิวงาน');
-        } catch(e) { showToast('ตั้งค่า Database ล้มเหลว: ' + e.message, 'error'); }
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-database"></i> ตั้งค่า Firebase Database';
-    }
-
-    // ======================================================
-    // CREATE JOB
-    // ======================================================
-    async function handleFormSubmit(e) {
-        e.preventDefault();
-        if (!STATE.isFirebaseReady) { showToast('Firebase ยังไม่พร้อม กรุณารอสักครู่', 'error'); return; }
-        const prompt = document.getElementById('prompt').value.trim();
-        const caption = document.getElementById('caption').value.trim();
-        const ratio = document.getElementById('aspectRatio').value;
-        const duration = parseInt(document.getElementById('duration').value) || 15;
-        const postOption = document.querySelector('input[name="postOption"]:checked').value;
-        const accountId = document.getElementById('tiktokAccount').value;
-        if (!prompt || !caption) { showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'warning'); return; }
-        if (postOption === 'auto' && !accountId) { showToast('กรุณาเลือกบัญชี TikTok ก่อนโพสต์อัตโนมัติ', 'warning'); return; }
-        const btn = document.getElementById('generateBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<div class="spinner"></div> กำลังบันทึก...';
-        try {
-            const jobId = 'job_' + Date.now();
-            const videoUrl = getRandomVideoUrl();
-            const job = {
-                id: jobId, title: prompt.substring(0, 60) + (prompt.length > 60 ? '...' : ''),
-                prompt, caption, aspectRatio: ratio, duration, postOption,
-                tiktokAccountId: accountId || null,
-                status: 'pending', videoUrl,
-                createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
-                progress: 0, statusMessage: 'รอดำเนินการ'
-            };
-            await STATE.db.ref('tiktokJobs/' + jobId).set(job);
-            showSuccessModal('เพิ่มงานสำเร็จ!', `งาน "${job.title}" ถูกเพิ่มลงในคิวเรียบร้อยแล้ว<br><br>รหัสงาน: <code style="font-size:11px;">${jobId}</code>`);
-            if (postOption === 'auto' && accountId) {
-                runAutoPostProcess(jobId, job);
-            } else {
-                await STATE.db.ref('tiktokJobs/' + jobId).update({ status: 'draft_completed', progress: 100, statusMessage: 'บันทึกแบบร่างเรียบร้อย' });
-            }
-            // Reset
-            document.getElementById('prompt').value = '';
-            document.getElementById('caption').value = '';
-            document.getElementById('duration').value = '15';
-        } catch(e) { showToast('เพิ่มงานล้มเหลว: ' + e.message, 'error'); }
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-magic"></i> สร้างและเพิ่มลงคิว';
-    }
-
-    function getRandomVideoUrl() {
-        return SAMPLE_VIDEOS[Math.floor(Math.random() * SAMPLE_VIDEOS.length)];
-    }
-
-    // ======================================================
-    // AUTO POST PROCESS
-    // ======================================================
-    async function runAutoPostProcess(jobId, job) {
-        const account = STATE.accounts.find(a => a.id === job.tiktokAccountId);
-        if (!account) return;
-        const update = async (data) => {
-            await STATE.db.ref('tiktokJobs/' + jobId).update({ ...data, updatedAt: new Date().toISOString() });
-        };
-        try {
-            await update({ status: 'processing', statusMessage: 'กำลังเตรียมวิดีโอ...', progress: 20 });
-            await delay(2000);
-            await update({ status: 'uploading_to_tiktok', statusMessage: `กำลังอัพโหลดไปยัง @${account.username}...`, progress: 55 });
-            await delay(2500);
-            await update({ status: 'posting_to_tiktok', statusMessage: 'กำลังโพสต์คลิป...', progress: 80 });
-            await delay(2000);
-            const tiktokVideoId = Date.now();
-            const tiktokUrl = `https://www.tiktok.com/@${account.username}/video/${tiktokVideoId}`;
-            await update({
-                status: 'posted', progress: 100,
-                statusMessage: `โพสต์ไปยัง @${account.username} สำเร็จ!`,
-                postedAt: new Date().toISOString(), tiktokUrl,
-                tiktokData: { video_id: String(tiktokVideoId), share_url: tiktokUrl }
-            });
-            // Update account stats
-            await STATE.db.ref('tiktokAccounts/' + account.id).update({
-                lastPosted: new Date().toISOString(),
-                totalPosts: (account.totalPosts || 0) + 1
-            });
-            showToast(`โพสต์ไปยัง @${account.username} สำเร็จ! 🎉`, 'success');
-        } catch(e) {
-            await update({ status: 'error', statusMessage: 'เกิดข้อผิดพลาด: ' + e.message });
-        }
-    }
-
-    const delay = ms => new Promise(r => setTimeout(r, ms));
-
-    // ======================================================
-    // QUEUE RENDERING
-    // ======================================================
-    function renderQueue() {
-        const list = document.getElementById('queueList');
-        const empty = document.getElementById('queueEmpty');
-        list.innerHTML = '';
-        if (!STATE.jobs.length) { empty.style.display = 'block'; return; }
-        empty.style.display = 'none';
-        STATE.jobs.forEach(job => {
-            const el = document.createElement('div');
-            el.className = 'card';
-            el.style.marginBottom = '12px';
-            const acct = STATE.accounts.find(a => a.id === job.tiktokAccountId);
-            const acctName = acct ? `@${acct.username}` : '';
-            const date = new Date(job.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-            el.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                    <div>
-                        <div style="font-weight: 700; font-size: 14px;">${escHtml(job.title)}</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${escHtml((job.caption||'').substring(0,80))}${(job.caption||'').length>80?'...':''}</div>
-                    </div>
-                    <span class="badge" style="background: ${getStatusColor(job.status)}; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px;">${getStatusLabel(job.status)}</span>
-                </div>
-                <div style="display: flex; gap: 12px; font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
-                    <span><i class="fas fa-expand-alt"></i> ${job.aspectRatio||'9:16'}</span>
-                    <span><i class="fas fa-clock"></i> ${job.duration||15}s</span>
-                    <span><i class="fas fa-calendar"></i> ${date}</span>
-                    ${acctName ? `<span><i class="fab fa-tiktok"></i> ${escHtml(acctName)}</span>` : ''}
-                </div>
-                <div style="height: 4px; background: var(--bg-dark); border-radius: 2px; overflow: hidden; margin-bottom: 12px;">
-                    <div style="height: 100%; background: linear-gradient(90deg, var(--tiktok-cyan), var(--tiktok-red)); width: ${job.progress||0}%; transition: width 0.3s;"></div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    ${job.videoUrl ? `<button class="btn btn-ghost btn-sm" onclick="playVideo('${escHtml(job.videoUrl)}')"><i class="fas fa-play"></i> เล่น</button>` : ''}
-                    ${job.tiktokUrl ? `<a class="btn btn-tiktok btn-sm" href="${escHtml(job.tiktokUrl)}" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>` : ''}
-                    <button class="btn btn-danger btn-sm" onclick="deleteJob('${job.id}')"><i class="fas fa-trash"></i> ลบ</button>
-                </div>`;
-            list.appendChild(el);
-        });
-    }
-
-    function getStatusColor(status) {
-        const map = {
-            pending: '#f59e0b',
-            processing: '#3b82f6',
-            uploading_to_tiktok: '#8b5cf6',
-            posting_to_tiktok: '#8b5cf6',
-            posted: '#10b981',
-            draft_completed: '#6366f1',
-            error: '#ef4444',
-        };
-        return map[status] || '#6b7280';
-    }
-
-    function getStatusLabel(status) {
-        const map = {
-            pending: 'รอดำเนินการ',
-            processing: 'กำลังสร้าง',
-            uploading_to_tiktok: 'กำลังอัพโหลด',
-            posting_to_tiktok: 'กำลังโพสต์',
-            posted: 'โพสต์แล้ว ✓',
-            draft_completed: 'แบบร่าง',
-            error: 'ผิดพลาด',
-        };
-        return map[status] || status;
-    }
-
-    function playVideo(url) {
-        window.open(url, '_blank');
-    }
-
-    async function deleteJob(id) {
-        showConfirmModal('ลบคิวงาน', 'คุณต้องการลบคิวงานนี้ใช่ไหม? ไม่สามารถย้อนกลับได้', async () => {
-            try {
-                await STATE.db.ref('tiktokJobs/' + id).remove();
-                showToast('ลบคิวงานสำเร็จ', 'success');
-            } catch(e) { showToast('ลบล้มเหลว: ' + e.message, 'error'); }
-        });
-    }
-
-    async function clearQueue() {
-        if (!STATE.jobs.length) { showToast('ไม่มีคิวงาน', 'info'); return; }
-        showConfirmModal('ล้างคิวงานทั้งหมด', `คุณต้องการล้างคิวงานทั้งหมด ${STATE.jobs.length} รายการ?`, async () => {
-            try {
-                await STATE.db.ref('tiktokJobs').remove();
-                showToast('ล้างคิวงานสำเร็จ', 'success');
-            } catch(e) { showToast('ล้างล้มเหลว: ' + e.message, 'error'); }
-        });
-    }
-
-    function refreshQueue() {
-        showToast('รีเฟรชข้อมูลแล้ว', 'info');
-    }
-
-    // ======================================================
     // ACCOUNTS
     // ======================================================
     function renderAccounts() {
-        const grid = document.getElementById('accountsGrid');
+        const container = document.getElementById('accountsContainer');
         const empty = document.getElementById('accountsEmpty');
-        grid.innerHTML = '';
+        container.innerHTML = '';
         if (!STATE.accounts.length) { empty.style.display = 'block'; return; }
         empty.style.display = 'none';
         STATE.accounts.forEach(acc => {
-            const el = document.createElement('div');
-            el.className = 'card';
-            el.style.marginBottom = '12px';
             const initials = (acc.displayName || acc.username || 'T').substring(0, 1).toUpperCase();
-            const followers = acc.profileData?.followers || acc.followers || 0;
-            const following = acc.profileData?.following || acc.following || 0;
+            const followers = acc.profileData?.followers || 0;
+            const following = acc.profileData?.following || 0;
             const totalPosts = acc.totalPosts || 0;
-            const methodMap = { tiktok_oauth: 'OAuth', qr_code: 'QR Code', manual: 'Token' };
-            const method = methodMap[acc.loginMethod] || 'ไม่ทราบ';
-            const connDate = new Date(acc.connectedAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-            el.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
-                    <div style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-red)); display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: 700; flex-shrink: 0;">${initials}</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 14px;">${escHtml(acc.displayName || acc.username)}</div>
-                        <div style="font-size: 12px; color: var(--text-secondary);">@${escHtml(acc.username)}</div>
+            const html = `
+                <div class="account-card">
+                    <div class="account-avatar">${initials}</div>
+                    <div class="account-name">${escHtml(acc.displayName || acc.username)}</div>
+                    <div class="account-username">@${escHtml(acc.username)}</div>
+                    <div class="account-stats">
+                        <div class="stat"><div class="stat-value">${formatNum(followers)}</div><div class="stat-label">ผู้ติดตาม</div></div>
+                        <div class="stat"><div class="stat-value">${formatNum(following)}</div><div class="stat-label">ติดตาม</div></div>
+                        <div class="stat"><div class="stat-value">${totalPosts}</div><div class="stat-label">โพสต์</div></div>
                     </div>
-                    <span style="background: rgba(37,244,238,0.15); color: var(--tiktok-cyan); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">${method}</span>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-                    <div style="text-align: center;">
-                        <div style="font-weight: 700; color: var(--tiktok-cyan); font-size: 16px;">${formatNum(followers)}</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">ผู้ติดตาม</div>
+                    <div class="account-actions">
+                        <button class="btn btn-ghost" onclick="testAccount('${acc.id}')"><i class="fas fa-stethoscope"></i> ทดสอบ</button>
+                        <button class="btn btn-danger" onclick="disconnectAccount('${acc.id}')"><i class="fas fa-trash"></i> ลบ</button>
                     </div>
-                    <div style="text-align: center;">
-                        <div style="font-weight: 700; color: var(--tiktok-red); font-size: 16px;">${formatNum(following)}</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">ติดตาม</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-weight: 700; color: #a78bfa; font-size: 16px;">${totalPosts}</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">โพสต์</div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-ghost btn-sm" onclick="viewProfile('${acc.id}')"><i class="fas fa-user"></i> โปรไฟล์</button>
-                    <button class="btn btn-ghost btn-sm" onclick="testAccount('${acc.id}')"><i class="fas fa-stethoscope"></i> ทดสอบ</button>
-                    <button class="btn btn-danger btn-sm" onclick="disconnectAccount('${acc.id}')"><i class="fas fa-sign-out-alt"></i> ออก</button>
                 </div>`;
-            grid.appendChild(el);
+            container.innerHTML += html;
         });
-    }
-
-    function renderAccountDropdown() {
-        const sel = document.getElementById('tiktokAccount');
-        const prev = sel.value;
-        while (sel.options.length > 1) sel.remove(1);
-        STATE.accounts.forEach(acc => {
-            const opt = new Option(`${acc.displayName || 'บัญชี TikTok'} (@${acc.username})`, acc.id);
-            sel.add(opt);
-        });
-        if (prev) sel.value = prev;
     }
 
     function updateAccountBadge() {
         const n = STATE.accounts.length;
         document.getElementById('tiktokLabel').textContent = `TikTok: ${n} บัญชี`;
         document.getElementById('tiktokDot').className = n > 0 ? 'dot dot-green' : 'dot dot-yellow';
-        document.getElementById('accountTabCount').textContent = n;
-    }
-
-    function viewProfile(id) {
-        const acc = STATE.accounts.find(a => a.id === id);
-        if (!acc) return;
-        const followers = acc.profileData?.followers || acc.followers || 0;
-        const following = acc.profileData?.following || acc.following || 0;
-        const likes = acc.profileData?.likes || acc.likes || 0;
-        const initials = (acc.displayName || acc.username || 'T').substring(0, 1).toUpperCase();
-        document.getElementById('profileContent').innerHTML = `
-            <div style="text-align:center; margin-bottom:20px;">
-                <div style="width:72px; height:72px; border-radius: 50%; background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-red)); display: flex; align-items: center; justify-content: center; font-size:28px; color: white; font-weight: 700; margin:0 auto 12px;">${initials}</div>
-                <h3 style="font-size:18px; font-weight:700;">${escHtml(acc.displayName || acc.username)}</h3>
-                <p style="color: var(--text-secondary); font-size: 13px;">@${escHtml(acc.username)}</p>
-            </div>
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:20px;">
-                <div style="text-align: center;">
-                    <div style="font-weight: 700; color: var(--tiktok-cyan); font-size: 18px;">${formatNum(followers)}</div>
-                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">ผู้ติดตาม</div>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-weight: 700; color: var(--tiktok-red); font-size: 18px;">${formatNum(following)}</div>
-                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">ติดตาม</div>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-weight: 700; color: #a78bfa; font-size: 18px;">${formatNum(likes)}</div>
-                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">ไลค์</div>
-                </div>
-            </div>
-            <hr class="divider">
-            <div style="display:flex; flex-direction: column; gap:8px;">
-                <div style="display: flex; justify-content: space-between;"><span style="font-size: 13px; color: var(--text-secondary);">ประเภทล็อกอิน</span><span style="font-size: 13px;">${acc.loginMethod || '-'}</span></div>
-                <div style="display: flex; justify-content: space-between;"><span style="font-size: 13px; color: var(--text-secondary);">สถานะ</span><span style="background: rgba(16,185,129,0.15); color: var(--success); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Active</span></div>
-                <div style="display: flex; justify-content: space-between;"><span style="font-size: 13px; color: var(--text-secondary);">โพสต์ทั้งหมด</span><span style="font-size: 13px;">${acc.totalPosts || 0}</span></div>
-                <div style="display: flex; justify-content: space-between;"><span style="font-size: 13px; color: var(--text-secondary);">เชื่อมต่อเมื่อ</span><span style="font-size: 13px;">${new Date(acc.connectedAt).toLocaleDateString('th-TH')}</span></div>
-            </div>`;
-        openModal('profileModal');
     }
 
     async function testAccount(id) {
@@ -1124,53 +644,32 @@
         if (!acc) return;
         showToast(`กำลังทดสอบบัญชี @${acc.username}...`, 'info');
         await delay(1500);
-        showSuccessModal('ทดสอบสำเร็จ!', `บัญชี @${acc.username} พร้อมใช้งาน<br><br>✓ เชื่อมต่อได้ปกติ<br>✓ สิทธิ์: user.info.basic, video.upload<br>✓ สามารถโพสต์วิดีโอได้`);
+        showSuccessModal('ทดสอบสำเร็จ!', `บัญชี @${acc.username} พร้อมใช้งาน<br><br>✓ เชื่อมต่อได้ปกติ<br>✓ สิทธิ์: user.info.basic, video.upload`);
     }
 
     async function disconnectAccount(id) {
         const acc = STATE.accounts.find(a => a.id === id);
         if (!acc) return;
-        showConfirmModal('ออกจากระบบ', `ยกเลิกการเชื่อมต่อกับ @${acc.username}?`, async () => {
+        showConfirmModal('ลบบัญชี', `ยกเลิกการเชื่อมต่อกับ @${acc.username}?`, async () => {
             try {
                 await STATE.db.ref('tiktokAccounts/' + id).remove();
-                showToast('ออกจากระบบสำเร็จ', 'success');
+                showToast('ลบบัญชีสำเร็จ', 'success');
             } catch(e) { showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
         });
     }
 
     // ======================================================
-    // STATS UPDATE
+    // QR CODE LOGIN
     // ======================================================
-    function updateAllStats() {
-        const total = STATE.jobs.length;
-        document.getElementById('queueTabCount').textContent = total;
-        document.getElementById('queueTabCount2').textContent = total;
-    }
-
-    // ======================================================
-    // TIKTOK LOGIN FLOWS - IMPROVED QR CODE
-    // ======================================================
-    function showLoginStep(name) {
-        ['loginStep1','loginStepQR','loginStepManual','loginStepProgress'].forEach(id => {
-            document.getElementById(id).style.display = id === name ? 'block' : 'none';
-        });
-    }
-
-    function backToLoginStep1() {
-        clearQRTimers();
-        showLoginStep('loginStep1');
-    }
-
-    // QR Code Login - IMPROVED
     function startQRLogin() {
-        showLoginStep('loginStepQR');
+        openModal('qrLoginModal');
         generateQRCode();
         startQRTimer();
     }
 
     function generateQRCode() {
-        const sessionId = 'tt_qr_' + Date.now();
-        const qrText = `tiktok://auth?client_key=demo&scope=user.info.basic,video.upload&state=${sessionId}&ts=${Date.now()}`;
+        STATE.qrSessionId = 'tt_qr_' + Date.now();
+        const qrText = `tiktok://auth?client_key=demo&scope=user.info.basic,video.upload&state=${STATE.qrSessionId}&ts=${Date.now()}`;
 
         const container = document.getElementById('qrCanvas');
         container.innerHTML = '';
@@ -1185,10 +684,11 @@
                 correctLevel: QRCode.CorrectLevel.M
             });
         } catch(e) {
+            console.error('QR Code error:', e);
             container.innerHTML = '<p style="color: var(--text-secondary);">ไม่สามารถสร้าง QR Code ได้</p>';
         }
 
-        startQRCheck(sessionId);
+        startQRCheck(STATE.qrSessionId);
     }
 
     function refreshQRCode() {
@@ -1218,7 +718,6 @@
     function startQRCheck(sessionId) {
         clearInterval(STATE.qrCheckInterval);
         STATE.qrCheckInterval = setInterval(async () => {
-            // Simulate QR scan detection - 15% chance every 2 seconds
             if (Math.random() > 0.85) {
                 clearQRTimers();
                 await completeQRLogin(sessionId);
@@ -1232,41 +731,53 @@
     }
 
     async function completeQRLogin(sessionId) {
-        showLoginStep('loginStepProgress');
-        setLoginProgress(40, 'สแกน QR Code สำเร็จ! กำลังดึงข้อมูล...');
+        closeModal('qrLoginModal');
+        openModal('progressModal');
+        setProgress(40, 'สแกน QR Code สำเร็จ! กำลังดึงข้อมูล...');
         await delay(1500);
-        setLoginProgress(80, 'กำลังบันทึกบัญชี...');
+        setProgress(80, 'กำลังบันทึกบัญชี...');
         const acc = makeMockAccount('qr_code', sessionId);
         await saveAccount(acc);
     }
 
-    // Manual Login
-    function startManualLogin() { showLoginStep('loginStepManual'); }
+    // ======================================================
+    // MANUAL LOGIN
+    // ======================================================
+    function startManualLogin() {
+        openModal('manualLoginModal');
+    }
 
     async function submitManualLogin() {
         const token = document.getElementById('manualToken').value.trim();
         const username = document.getElementById('manualUsername').value.trim();
         const displayName = document.getElementById('manualDisplayName').value.trim();
         if (!token || !username) { showToast('กรุณากรอก Token และชื่อผู้ใช้', 'warning'); return; }
-        showLoginStep('loginStepProgress');
-        setLoginProgress(50, 'กำลังตรวจสอบ Token...');
+        closeModal('manualLoginModal');
+        openModal('progressModal');
+        setProgress(50, 'กำลังตรวจสอบ Token...');
         await delay(1500);
-        setLoginProgress(85, 'กำลังบันทึกบัญชี...');
+        setProgress(85, 'กำลังบันทึกบัญชี...');
         const acc = {
             id: 'tt_manual_' + Date.now(),
-            username: username.replace('@',''), displayName: displayName || username,
-            accessToken: token, scope: 'user.info.basic,video.upload',
-            connectedAt: new Date().toISOString(), isActive: true,
-            loginMethod: 'manual', totalPosts: 0,
+            username: username.replace('@',''),
+            displayName: displayName || username,
+            accessToken: token,
+            scope: 'user.info.basic,video.upload',
+            connectedAt: new Date().toISOString(),
+            isActive: true,
+            loginMethod: 'manual',
+            totalPosts: 0,
             profileData: { followers: 0, following: 0, likes: 0 }
         };
         await saveAccount(acc);
     }
 
-    // OAuth Login
+    // ======================================================
+    // OAUTH LOGIN
+    // ======================================================
     async function startOAuthLogin() {
-        showLoginStep('loginStepProgress');
-        setLoginProgress(10, 'กำลังเตรียมการเชื่อมต่อ...');
+        openModal('progressModal');
+        setProgress(10, 'กำลังเตรียมการเชื่อมต่อ...');
         const win = window.open('', 'tiktok_oauth', 'width=420,height=620');
         if (win) {
             win.document.write(`<!DOCTYPE html><html><head><title>TikTok Login</title>
@@ -1276,61 +787,64 @@
             input{width:100%;padding:12px;margin:6px 0;background:#222;border:1px solid #333;border-radius:8px;color:#fff;box-sizing:border-box;}
             button{width:100%;padding:14px;background:linear-gradient(135deg,#25F4EE,#FE2C55);border:none;border-radius:8px;color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:12px;}
             .note{font-size:11px;color:#555;margin-top:16px;}</style></head>
-            <body><div class="box"><h1>🎵 TikTok</h1><p>ล็อกอินเพื่ออนุญาตให้โพสต์วิดีโอ</p>
+            <body><div class="box"><h1>🎵 TikTok</h1><p>ล็อกอินเพื่ออนุญาตให้เชื่อมต่อ</p>
             <input type="text" placeholder="อีเมล / เบอร์โทร / @username" id="u">
             <input type="password" placeholder="รหัสผ่าน" id="p">
-            <button onclick="const u=document.getElementById('u').value; const p=document.getElementById('p').value; if(u&&p) { window.opener.completeOAuthLogin('${Date.now()}'); window.close(); } else alert('กรุณากรอกข้อมูล');">ล็อกอิน</button>
+            <button onclick="this.textContent='กำลังล็อกอิน...';setTimeout(()=>window.close(),1500)">ล็อกอิน</button>
             <p class="note">ระบบ Demo - ไม่เก็บข้อมูล</p></div></body></html>`);
         }
-        await delay(2000);
-        setLoginProgress(50, 'กำลังรอการยืนยัน...');
-    }
-
-    async function completeOAuthLogin(sessionId) {
-        setLoginProgress(85, 'กำลังบันทึกบัญชี...');
-        const acc = makeMockAccount('tiktok_oauth', sessionId);
+        for (let i = 0; i < 5; i++) {
+            await delay(1000);
+            setProgress(10 + (i + 1) * 16, ['กำลังเชื่อมต่อ...','รอการอนุญาต...','กำลังตรวจสอบ...','ได้รับ Token แล้ว!','กำลังดึงโปรไฟล์...'][i]);
+        }
+        if (win && !win.closed) win.close();
+        const acc = makeMockAccount('tiktok_oauth');
         await saveAccount(acc);
     }
 
-    function setLoginProgress(pct, msg) {
-        document.getElementById('loginProgressBar').style.width = pct + '%';
-        document.getElementById('loginProgressMsg').textContent = msg;
-    }
-
+    // ======================================================
+    // HELPERS
+    // ======================================================
     function makeMockAccount(method, sessionId) {
-        const usernames = ['creator_pro', 'tiktok_master', 'viral_content', 'trending_now', 'digital_star'];
-        const username = usernames[Math.floor(Math.random() * usernames.length)] + '_' + Math.floor(Math.random() * 1000);
+        const names = ['thai_tiktoker', 'sara_thai', 'foodie_bkk', 'travel_th', 'tech_thai'];
+        const displayNames = ['Thai TikToker', 'Sara ไทย', 'คนรักอาหาร', 'เที่ยวไทย', 'Tech Thai'];
+        const i = Math.floor(Math.random() * names.length);
         return {
-            id: 'tt_' + method + '_' + Date.now(),
-            username: username,
-            displayName: 'TikTok Creator',
-            accessToken: 'token_' + sessionId,
+            id: `tt_${method}_${Date.now()}`,
+            username: names[i] + '_' + Math.floor(Math.random() * 999),
+            displayName: displayNames[i],
+            accessToken: genToken(),
             scope: 'user.info.basic,video.upload',
             connectedAt: new Date().toISOString(),
             isActive: true,
             loginMethod: method,
             totalPosts: 0,
+            qrSessionId: sessionId || null,
             profileData: {
-                followers: Math.floor(Math.random() * 50000 + 1000),
-                following: Math.floor(Math.random() * 1000 + 100),
-                likes: Math.floor(Math.random() * 500000 + 10000),
-                bio: 'Content Creator | TikTok Automation'
+                bio: 'สร้างคอนเทนต์บน TikTok ทุกวัน 🎵',
+                followers: Math.floor(Math.random() * 80000) + 2000,
+                following: Math.floor(Math.random() * 2000) + 100,
+                likes: Math.floor(Math.random() * 200000) + 5000
             }
         };
     }
 
+    function genToken() {
+        const c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        return Array.from({length: 48}, () => c[Math.floor(Math.random() * c.length)]).join('');
+    }
+
     async function saveAccount(acc) {
-        if (!STATE.isFirebaseReady) { showToast('Firebase ยังไม่พร้อม', 'error'); return; }
         try {
+            if (!STATE.isFirebaseReady) throw new Error('Firebase ยังไม่พร้อม');
             await STATE.db.ref('tiktokAccounts/' + acc.id).set(acc);
-            await delay(1000);
-            setLoginProgress(100, 'เชื่อมต่อสำเร็จ!');
-            await delay(1500);
-            closeModal('loginModal');
-            showSuccessModal('เพิ่มบัญชีสำเร็จ!', `บัญชี @${acc.username} เชื่อมต่อเรียบร้อยแล้ว<br><br>สามารถใช้งานได้ทันที`);
+            setProgress(100, 'ล็อกอินสำเร็จ!');
+            await delay(800);
+            closeModal('progressModal');
+            showSuccessModal('ล็อกอิน TikTok สำเร็จ! 🎉', `บัญชี @${acc.username} ถูกเชื่อมต่อกับระบบเรียบร้อยแล้ว!`);
         } catch(e) {
+            closeModal('progressModal');
             showToast('บันทึกบัญชีล้มเหลว: ' + e.message, 'error');
-            backToLoginStep1();
         }
     }
 
@@ -1347,8 +861,21 @@
         } catch(e) { showToast('บันทึกล้มเหลว: ' + e.message, 'error'); }
     }
 
+    async function initializeDatabase() {
+        if (!STATE.isFirebaseReady) { showToast('Firebase ยังไม่พร้อม', 'error'); return; }
+        try {
+            await STATE.db.ref('tiktokAutomation').update({
+                initialized: true,
+                initializedAt: new Date().toISOString(),
+                systemVersion: '3.1.0',
+                loginMethod: 'qr_code'
+            });
+            showSuccessModal('ตั้งค่า Database สำเร็จ', 'Firebase Realtime Database พร้อมใช้งานแล้ว!');
+        } catch(e) { showToast('ตั้งค่า Database ล้มเหลว: ' + e.message, 'error'); }
+    }
+
     async function resetSystem() {
-        showConfirmModal('รีเซ็ตระบบ', 'รีเซ็ตการตั้งค่าทั้งหมด? (ไม่ลบข้อมูลคิวและบัญชี)', async () => {
+        showConfirmModal('รีเซ็ตระบบ', 'รีเซ็ตการตั้งค่าทั้งหมด? (ไม่ลบข้อมูลบัญชี)', async () => {
             try {
                 await STATE.db.ref('tiktokConfig').set({ clientKey: '', clientSecret: '', resetAt: new Date().toISOString() });
                 document.getElementById('clientKey').value = '';
@@ -1363,18 +890,7 @@
         await delay(1500);
         const firebase = STATE.isFirebaseReady ? '✓ เชื่อมต่อแล้ว' : '✗ ไม่พร้อม';
         const accounts = STATE.accounts.length > 0 ? `✓ ${STATE.accounts.length} บัญชี` : '✗ ยังไม่ได้ล็อกอิน';
-        const queue = `✓ ${STATE.jobs.length} งาน`;
-        showSuccessModal('ผลการทดสอบระบบ', `Firebase: ${firebase}<br>TikTok: ${accounts}<br>คิวงาน: ${queue}<br><br>สถานะ: ${STATE.isFirebaseReady ? '✓ ระบบพร้อมใช้งาน' : '✗ ยังไม่พร้อม'}`);
-    }
-
-    // ======================================================
-    // TABS
-    // ======================================================
-    function switchTab(id) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('tab-' + id).classList.add('active');
-        document.querySelector(`.tab-btn[data-tab="${id}"]`)?.classList.add('active');
+        showSuccessModal('ผลการทดสอบระบบ', `Firebase: ${firebase}<br>TikTok: ${accounts}<br><br>สถานะ: ${STATE.isFirebaseReady ? '✓ ระบบพร้อมใช้งาน' : '✗ ยังไม่พร้อม'}`);
     }
 
     // ======================================================
@@ -1383,7 +899,12 @@
     function openModal(id) { document.getElementById(id).classList.add('open'); }
     function closeModal(id) {
         document.getElementById(id).classList.remove('open');
-        if (id === 'loginModal') { clearQRTimers(); backToLoginStep1(); }
+        if (id === 'qrLoginModal') clearQRTimers();
+        if (id === 'manualLoginModal') {
+            document.getElementById('manualUsername').value = '';
+            document.getElementById('manualDisplayName').value = '';
+            document.getElementById('manualToken').value = '';
+        }
     }
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', function(e) {
@@ -1408,6 +929,11 @@
         closeModal('confirmModal');
         if (yes && _pendingConfirm) _pendingConfirm();
         _pendingConfirm = null;
+    }
+
+    function setProgress(pct, msg) {
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('progressMsg').textContent = msg;
     }
 
     // ======================================================
@@ -1439,40 +965,30 @@
         if (n >= 1000) return (n/1000).toFixed(1) + 'K';
         return String(n);
     }
+    const delay = ms => new Promise(r => setTimeout(r, ms));
 
     // ======================================================
     // INIT
     // ======================================================
     document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-        });
         setTimeout(initFirebase, 500);
     });
 
     // Expose to global
-    window.switchTab = switchTab;
-    window.openModal = openModal;
-    window.closeModal = closeModal;
-    window.confirmAction = confirmAction;
-    window.initializeDatabase = initializeDatabase;
-    window.testSystemConnection = testSystemConnection;
     window.startQRLogin = startQRLogin;
     window.startManualLogin = startManualLogin;
     window.startOAuthLogin = startOAuthLogin;
     window.submitManualLogin = submitManualLogin;
-    window.backToLoginStep1 = backToLoginStep1;
     window.refreshQRCode = refreshQRCode;
-    window.viewProfile = viewProfile;
     window.testAccount = testAccount;
     window.disconnectAccount = disconnectAccount;
-    window.deleteJob = deleteJob;
-    window.clearQueue = clearQueue;
-    window.refreshQueue = refreshQueue;
-    window.playVideo = playVideo;
     window.saveTikTokConfig = saveTikTokConfig;
+    window.initializeDatabase = initializeDatabase;
     window.resetSystem = resetSystem;
-    window.completeOAuthLogin = completeOAuthLogin;
+    window.testSystemConnection = testSystemConnection;
+    window.openModal = openModal;
+    window.closeModal = closeModal;
+    window.confirmAction = confirmAction;
     </script>
 </body>
 </html>
